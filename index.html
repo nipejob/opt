@@ -2,10 +2,12 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>⏳ Optælling</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+    <!-- QRCode lib (rettet script-tag) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -269,3 +271,268 @@ function getMonthlyData() {
 function getYearlyData() {
     const yearly = {};
     entries.forEach(entry => {
+        const yearKey = getYearKey(entry.timestamp);
+        if (!yearly[yearKey]) {
+            yearly[yearKey] = Object.fromEntries(categories.map(c => [c.id, 0]));
+        }
+        if (yearly[yearKey][entry.categoryId] !== undefined) {
+            yearly[yearKey][entry.categoryId]++;
+        }
+    });
+    return yearly;
+}
+
+/* ---------- UI-rendering ---------- */
+function bindPressHandlers(div, catId) {
+    let pressTimer;
+    // Langt tryk = -1
+    const start = () => { pressTimer = setTimeout(() => changeCount(catId, -1), 600); };
+    const clear = () => { clearTimeout(pressTimer); };
+    div.addEventListener('mousedown', start);
+    ['mouseup','mouseleave'].forEach(ev => div.addEventListener(ev, clear));
+    // Touch
+    div.addEventListener('touchstart', start, {passive: true});
+    ['touchend','touchcancel','touchmove'].forEach(ev => div.addEventListener(ev, clear, {passive: true}));
+    // Klik = +1
+    div.addEventListener('click', () => changeCount(catId, +1));
+    // A11y: tastatur
+    div.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); changeCount(catId, +1); }
+        if (e.key === 'Backspace' || e.key === 'Delete') { e.preventDefault(); changeCount(catId, -1); }
+    });
+}
+function renderCategories() {
+    const counts = getCounts();
+    const categoriesDiv = document.getElementById('categories');
+    categoriesDiv.innerHTML = '';
+
+    categories.forEach(cat => {
+        const div = document.createElement('div');
+        div.className = `category ${cat.class}`;
+        div.setAttribute('role', 'button');
+        div.setAttribute('tabindex', '0');
+        div.setAttribute('aria-label', `${cat.name}, antal ${counts[cat.id]}`);
+
+        div.innerHTML = `
+            <span class="category-name">${cat.name}</span>
+            <span class="category-count">${counts[cat.id]}</span>
+        `;
+        bindPressHandlers(div, cat.id);
+        categoriesDiv.appendChild(div);
+    });
+}
+function renderMonthView() {
+    const statsView = document.getElementById('statsView');
+    const monthly = getMonthlyData();
+    const sortedMonths = Object.keys(monthly).sort().reverse();
+
+    const yearGroups = {};
+    sortedMonths.forEach(monthKey => {
+        const year = monthKey.split('-')[0];
+        if (!yearGroups[year]) yearGroups[year] = [];
+        yearGroups[year].push(monthKey);
+    });
+
+    let html = '';
+    Object.keys(yearGroups).sort().reverse().forEach(year => {
+        html += `<div class="year-section">
+            <div class="year-header">${year}</div>`;
+        yearGroups[year].forEach(monthKey => {
+            html += `<div class="month-section">
+                <div class="month-header">${getMonthName(monthKey)}</div>`;
+            categories.forEach(cat => {
+                const count = (monthly[monthKey][cat.id] || []).length;
+                if (count > 0) {
+                    const dates = monthly[monthKey][cat.id].map(formatDate).join(', ');
+                    html += `
+                        <div class="category-item">
+                            <div>
+                                <div class="category-item-name">${cat.name}</div>
+                                <div class="entry-dates">${dates}</div>
+                            </div>
+                            <div class="category-item-count">${count}</div>
+                        </div>`;
+                }
+            });
+            html += `</div>`;
+        });
+        html += `</div>`;
+    });
+    statsView.innerHTML = html;
+}
+function renderYearView() {
+    const statsView = document.getElementById('statsView');
+    const yearly = getYearlyData();
+    const sortedYears = Object.keys(yearly).sort().reverse();
+
+    let html = '';
+    sortedYears.forEach(year => {
+        html += `<div class="year-section">
+            <div class="year-header">${year}</div>
+            <div class="month-section">`;
+        categories.forEach(cat => {
+            const count = yearly[year][cat.id] || 0;
+            if (count > 0) {
+                html += `
+                    <div class="category-item">
+                        <div class="category-item-name">${cat.name}</div>
+                        <div class="category-item-count">${count}</div>
+                    </div>`;
+            }
+        });
+        html += `</div></div>`;
+    });
+    statsView.innerHTML = html;
+}
+function render() {
+    renderCategories();
+    const statsView = document.getElementById('statsView');
+    if (currentView === 'month') {
+        statsView.style.display = 'block';
+        renderMonthView();
+    } else if (currentView === 'year') {
+        statsView.style.display = 'block';
+        renderYearView();
+    } else {
+        statsView.style.display = 'none';
+    }
+}
+
+/* ---------- Ændring af antal ---------- */
+function changeCount(catId, delta) {
+    if (delta > 0) {
+        addEntry(catId);
+    } else {
+        // Find seneste entry for kategorien og fjern den
+        for (let i = entries.length - 1; i >= 0; i--) {
+            if (entries[i].categoryId === catId) {
+                entries.splice(i, 1);
+                saveLocal(); scheduleQRUpdate(); render();
+                break;
+            }
+        }
+    }
+}
+function addEntry(categoryId) {
+    const now = new Date();
+    entries.push({ categoryId, timestamp: now.toISOString() });
+    saveLocal();
+    scheduleQRUpdate();
+    render();
+}
+function undoLast() {
+    if (!entries.length) return;
+    entries.pop();
+    saveLocal();
+    scheduleQRUpdate();
+    render();
+}
+
+/* ---------- Slet dagens ---------- */
+function deleteTodayEntries() {
+    const todayCount = entries.filter(e => isSameLocalDay(e.timestamp)).length;
+
+    if (todayCount === 0) {
+        alert('Der er ingen optællinger fra i dag at slette.');
+        return;
+    }
+    if (confirm(`Vil du slette ${todayCount} optælling(er) fra i dag?`)) {
+        entries = entries.filter(e => !isSameLocalDay(e.timestamp));
+        saveLocal();
+        scheduleQRUpdate();
+        render();
+    }
+}
+
+/* ---------- Eksport ---------- */
+// 1) CSV-eksport pr. år (én række pr. år, én kolonne pr. kategori + Total). Semikolon-separeret for dansk Excel.
+function downloadYearlyCSV() {
+    const yearly = getYearlyData();
+    const years = Object.keys(yearly).sort(); // stigende
+    const header = ['År', ...categories.map(c => c.name), 'Total'];
+
+    const rows = [header];
+    years.forEach(y => {
+        const counts = categories.map(c => yearly[y][c.id] || 0);
+        const total = counts.reduce((a,b) => a + b, 0);
+        rows.push([y, ...counts, total]);
+    });
+
+    // Semikolon, med UTF-8 BOM for Excel
+    const sep = ';';
+    const csv = '\ufeff' + rows.map(r => r.map(val => {
+        const s = String(val);
+        // citer felt ved sep, " eller newline
+        if (s.includes(sep) || s.includes('"') || s.includes('\n')) {
+            return '"' + s.replace(/"/g, '""') + '"';
+        }
+        return s;
+    }).join(sep)).join('\n');
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `optaelling_arsopgoerelse_${formatDateFile()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// 2) Download data (til dags dato) som JSON
+function downloadDataToDate() {
+    const endToday = endOfTodayLocal();
+    const data = entries
+        .filter(e => new Date(e.timestamp) <= endToday)
+        .map(e => ({
+            categoryId: e.categoryId,
+            categoryName: getCategoryById(e.categoryId)?.name || e.categoryId,
+            timestamp: e.timestamp
+        }));
+
+    const json = JSON.stringify({ exportedAt: new Date().toISOString(), count: data.length, entries: data }, null, 2);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `optaelling_data_${formatDateFile()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+/* ---------- Visnings-tilstand i hash ---------- */
+function loadViewFromHash() {
+    const v = (location.hash || '#total').replace('#','');
+    if (['total','month','year'].includes(v)) currentView = v;
+    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+    if (currentView === 'total') document.getElementById('totalBtn').classList.add('active');
+    if (currentView === 'month') document.getElementById('monthBtn').classList.add('active');
+    if (currentView === 'year')  document.getElementById('yearBtn').classList.add('active');
+}
+function saveViewToHash() { location.hash = currentView; }
+
+/* ---------- Event binding ---------- */
+document.getElementById('totalBtn').addEventListener('click', function() {
+    currentView = 'total';
+    saveViewToHash();
+    render();
+});
+document.getElementById('monthBtn').addEventListener('click', function() {
+    currentView = 'month';
+    saveViewToHash();
+    render();
+});
+document.getElementById('yearBtn').addEventListener('click', function() {
+    currentView = 'year';
+    saveViewToHash();
+    render();
+});
+document.getElementById('deleteTodayBtn').addEventListener('click', deleteTodayEntries);
+document.getElementById('undoBtn').addEventListener('click', undoLast);
+document.getElementById('downloadCsvBtn').addEventListener('click', downloadYearlyCSV);
+document.getElementById('downloadDataBtn').addEventListener('click', downloadDataToDate);
+
+/* ---------- Init ---------- */
