@@ -208,6 +208,12 @@
         .qr-code-container {
             display: inline-block;
         }
+        
+        .qr-warning {
+            font-size: 11px;
+            color: #dc2626;
+            margin-top: 5px;
+        }
        
         .download-section {
             background: white;
@@ -357,6 +363,23 @@
             return getBaseURL() + '?d=' + encoded;
         }
        
+        function createQRCode(elementId, url) {
+            try {
+                new QRCode(document.getElementById(elementId), {
+                    text: url,
+                    width: 120,
+                    height: 120,
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+                return true;
+            } catch (error) {
+                console.error('QR Code error:', error);
+                const elem = document.getElementById(elementId);
+                elem.innerHTML = '<div class="qr-warning">For meget data</div>';
+                return false;
+            }
+        }
+       
         function updateQRCodes() {
             const qrGrid = document.getElementById('qrGrid');
             qrGrid.innerHTML = '';
@@ -366,25 +389,23 @@
             allDiv.className = 'qr-item';
             allDiv.innerHTML = '<h3>📊 Alle Data</h3><div class="qr-code-container" id="qr-all"></div>';
             qrGrid.appendChild(allDiv);
-            new QRCode(document.getElementById('qr-all'), {
-                text: getDataURL(),
-                width: 120,
-                height: 120
-            });
+            
+            setTimeout(() => {
+                createQRCode('qr-all', getDataURL());
+            }, 10);
             
             // Individuelle kategorier
-            categories.forEach(cat => {
+            categories.forEach((cat, index) => {
                 const catEntries = entries.filter(e => e.category === cat.name);
                 if (catEntries.length > 0) {
                     const div = document.createElement('div');
                     div.className = 'qr-item';
                     div.innerHTML = `<h3>${cat.name} (${catEntries.length})</h3><div class="qr-code-container" id="qr-${cat.id}"></div>`;
                     qrGrid.appendChild(div);
-                    new QRCode(document.getElementById('qr-' + cat.id), {
-                        text: getDataURL(cat.name),
-                        width: 120,
-                        height: 120
-                    });
+                    
+                    setTimeout(() => {
+                        createQRCode('qr-' + cat.id, getDataURL(cat.name));
+                    }, 10 * (index + 2));
                 }
             });
         }
@@ -494,8 +515,8 @@
         }
        
         function deleteTodayEntries() {
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0];
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
            
             const todayCount = entries.filter(e => e.timestamp.startsWith(todayStr)).length;
            
@@ -509,6 +530,7 @@
                 updateQRCodes();
                 updateYearSelect();
                 render();
+                alert('Dagens optællinger er slettet.');
             }
         }
        
