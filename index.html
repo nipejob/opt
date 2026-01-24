@@ -1,16 +1,83 @@
 <!DOCTYPE html>
+
 <html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lucky</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+    
+    .container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 60px 40px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+    }
+    
+    h1 {
+        font-size: 72px;
+        color: #667eea;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        font-weight: bold;
+    }
+    
+    .audio-container {
+        margin-top: 30px;
+    }
+    
+    audio {
+        width: 100%;
+        max-width: 400px;
+        outline: none;
+        border-radius: 50px;
+    }
+    
+    audio::-webkit-media-controls-panel {
+        background-color: #667eea;
+    }
+    
+    @media (max-width: 600px) {
+        h1 {
+            font-size: 48px;
+        }
+        
+        .container {
+            padding: 40px 30px;
+        }
+    }
+</style>
+```
+
 </head>
 <body>
-    <h1>Lucky</h1>
-    <p>Afspil lydfilen nedenfor:</p>
-    <audio controls>
-        <source src="lyd.m4a" type="audio/mp4">
-        Din browser understøtter ikke audio-elementet.
-    </audio>
+    <div class="container">
+        <h1>Lucky</h1>
+        <div class="audio-container">
+            <audio controls>
+                <source src="lyd.mp4" type="audio/mp4">
+                Din browser understøtter ikke audio elementet.
+            </audio>
+        </div>
+    </div>
 </body>
 </html>
