@@ -1,82 +1,510 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="da">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Aktie-checkliste</title>
+  <style>
+    :root{
+      --bg:#f0f1f3;            /* grå baggrund */
+      --panel:#ffffff;         /* kort/panel */
+      --text:#1f2937;
+      --muted:#6b7280;
 
-```
-    body {
-        font-family: 'Arial', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-    
-    .container {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        padding: 60px 40px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        max-width: 500px;
-        width: 100%;
-    }
-    
-    h1 {
-        font-size: 72px;
-        color: #667eea;
-        margin-bottom: 40px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-        font-weight: bold;
-    }
-    
-    .audio-container {
-        margin-top: 30px;
-    }
-    
-    audio {
-        width: 100%;
-        max-width: 400px;
-        outline: none;
-        border-radius: 50px;
-    }
-    
-    audio::-webkit-media-controls-panel {
-        background-color: #667eea;
-    }
-    
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 48px;
-        }
-        
-        .container {
-            padding: 40px 30px;
-        }
-    }
-</style>
-```
+      --green:#2e7d32;         /* Ja */
+      --green-600:#27642a;
+      --green-200:#a5d6a7;
 
+      --red:#e53935;           /* Nej – klar rød */
+      --red-600:#c62828;
+      --red-200:#ef9a9a;
+
+      --yellow:#f9a825;        /* Ved ikke */
+      --yellow-600:#f57f17;
+      --yellow-200:#ffe082;
+      --yellow-text:#1f2937;
+
+      --blue:#1565c0;          /* overskrifter/accenter */
+      --blue-200:#90caf9;
+
+      --orange:#ef6c00;        /* gruppe-accent */
+      --orange-200:#ffcc80;
+
+      --gray-300:#e5e7eb;      /* u- valgt/ub besvaret */
+      --gray-500:#9ca3af;
+      --radius:12px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      background:var(--bg); color:var(--text); line-height:1.45;
+    }
+    .container{
+      max-width:980px; margin:28px auto; padding:0 16px;
+    }
+
+    .section{
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+      padding:24px; margin:18px 0 28px;
+      border:1px solid var(--gray-300);
+    }
+    .sec-head{
+      display:flex; flex-direction:column; gap:6px; margin-bottom:12px;
+    }
+    .sec-title{
+      margin:0; font-size:1.35rem; color:var(--blue);
+      display:flex; align-items:center; gap:10px;
+    }
+    .sec-sub{
+      margin:0; color:var(--muted); font-style:italic;
+    }
+
+    .group{
+      margin-top:18px; padding-top:14px; border-top:3px solid var(--orange-200);
+    }
+    .group-title{
+      margin:0 0 10px; font-weight:700; color:var(--orange);
+      font-size:1.05rem;
+    }
+
+    .controls{
+      display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+      margin:8px 0 14px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px; border-radius:999px; font-size:.9rem; font-weight:600;
+      color:#fff;
+    }
+    .pill.gray{ background:var(--gray-500) }
+    .pill.green{ background:var(--green) }
+    .pill.red{ background:var(--red) }
+    .pill.yellow{ background:var(--yellow); color:var(--yellow-text) }
+
+    .btn{
+      border:none; border-radius:10px; padding:8px 12px; font-weight:700; color:#fff;
+      cursor:pointer; transition:transform .03s ease, box-shadow .15s ease, filter .15s ease;
+      box-shadow:0 2px 10px rgba(0,0,0,.08);
+    }
+    .btn:active{ transform:translateY(1px) }
+    .btn.small{ padding:6px 10px; font-weight:600 }
+
+    .btn-yes{ background:var(--green) }
+    .btn-yes:hover{ filter:brightness(1.05) }
+    .btn-yes.selected{ outline:3px solid var(--green-200); box-shadow:0 0 0 3px rgba(46,125,50,.2) inset }
+
+    .btn-no{ background:var(--red) }
+    .btn-no:hover{ filter:brightness(1.05) }
+    .btn-no.selected{ outline:3px solid var(--red-200); box-shadow:0 0 0 3px rgba(229,57,53,.2) inset }
+
+    .btn-unk{ background:var(--yellow); color:var(--yellow-text) }
+    .btn-unk:hover{ filter:brightness(1.05) }
+    .btn-unk.selected{ outline:3px solid var(--yellow-200); box-shadow:0 0 0 3px rgba(249,168,37,.2) inset }
+
+    .question{
+      display:grid; grid-template-columns: 1fr auto; gap:8px 12px;
+      padding:12px 10px; margin:6px 0; border:1px solid var(--gray-300); border-radius:12px;
+      background:#fafafa;
+    }
+    .q-left{ display:flex; gap:10px; align-items:flex-start }
+    .q-index{
+      flex:0 0 auto; min-width:28px; height:28px; border-radius:7px;
+      background:var(--blue-200); color:#0f172a; font-weight:800;
+      display:inline-flex; align-items:center; justify-content:center; font-size:.9rem;
+      margin-top:2px;
+    }
+    .q-text{ margin:0; }
+    .q-actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+    .status{
+      padding:4px 8px; border-radius:999px; font-size:.82rem; font-weight:700;
+      background:#eef2f7; color:#374151; border:1px dashed var(--gray-300);
+    }
+
+    .counters{
+      display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;
+    }
+
+    .foot-total{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      margin-top:8px; padding:12px 10px; border-radius:10px; background:#f7f7f9;
+      border:1px solid var(--gray-300);
+    }
+    .note{
+      background:#fffbe6; border:1px solid #ffe58f; color:#7c6f00;
+      padding:10px 12px; border-radius:10px; margin-top:12px; font-size:.95rem;
+    }
+    .hr{
+      height:3px; background:linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
+      border-radius:3px; margin:12px 0 6px;
+    }
+
+    .blockquote{
+      border-left:5px solid var(--blue); padding:10px 14px; background:#f6fbff; border-radius:0 10px 10px 0;
+      margin:12px 0 0; color:#0f172a; font-weight:600;
+    }
+
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
+    }
+    .reset{
+      background:#ffffff; color:#111827; border:2px solid var(--gray-300);
+      padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:700;
+    }
+    .reset:hover{ filter:brightness(0.98) }
+
+    @media (max-width:680px){
+      .question{ grid-template-columns: 1fr }
+      .q-actions{ justify-content:flex-start }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Lucky</h1>
-        <div class="audio-container">
-            <audio controls>
-                <source src="lyd.mp4" type="audio/mp4">
-                Din browser understøtter ikke audio elementet.
-            </audio>
+  <div class="container">
+    <!-- Sektion 1 -->
+    <section class="section" id="section-1">
+      <div class="topbar">
+        <div class="sec-head">
+          <h2 class="sec-title">🧠 Aktie-checkliste før køb</h2>
+          <p class="sec-sub">Alle relevante punkter skal kunne besvares ærligt.</p>
         </div>
-    </div>
+        <button class="reset" data-reset="s1" aria-label="Nulstil sektion 1">Nulstil</button>
+      </div>
+
+      <div class="controls">
+        <span class="pill green" id="s1-yes-pill">Ja: <strong>0</strong></span>
+        <span class="pill red" id="s1-no-pill">Nej: <strong>0</strong></span>
+        <span class="pill yellow" id="s1-unk-pill">Ved ikke: <strong>0</strong></span>
+        <span class="pill gray" id="s1-empty-pill">Ubesvaret: <strong>0</strong></span>
+      </div>
+
+      <div class="hr"></div>
+
+      <div id="s1-groups"></div>
+
+      <div class="blockquote">
+        Tommelregel: Hvis ét centralt punkt giver tvivl → <strong>ingen handel i dag</strong>.
+      </div>
+    </section>
+
+    <!-- Sektion 2 -->
+    <section class="section" id="section-2">
+      <div class="topbar">
+        <div class="sec-head">
+          <h2 class="sec-title">Aktie-checkliste (12 must-have før køb)</h2>
+        </div>
+        <button class="reset" data-reset="s2" aria-label="Nulstil sektion 2">Nulstil</button>
+      </div>
+
+      <div class="controls">
+        <span class="pill green" id="s2-yes-pill">Ja: <strong>0</strong></span>
+        <span class="pill red" id="s2-no-pill">Nej: <strong>0</strong></span>
+        <span class="pill yellow" id="s2-unk-pill">Ved ikke: <strong>0</strong></span>
+        <span class="pill gray" id="s2-empty-pill">Ubesvaret: <strong>0</strong></span>
+      </div>
+
+      <div class="hr"></div>
+      <div id="s2-list"></div>
+
+      <div class="note">
+        Tip: Du kan bruge sektionen ovenfor til den fulde kvalitetskontrol — og denne som hurtig "go/no-go".
+      </div>
+    </section>
+
+    <!-- Samlet tælling for hele siden -->
+    <section class="section">
+      <h3 class="sec-title" style="font-size:1.1rem">Samlet optælling</h3>
+      <div class="foot-total" id="totals">
+        <span class="pill green">Ja samlet: <strong>0</strong></span>
+        <span class="pill red">Nej samlet: <strong>0</strong></span>
+        <span class="pill yellow">Ved ikke samlet: <strong>0</strong></span>
+        <span class="pill gray">Ubesvaret samlet: <strong>0</strong></span>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ---- Data --------------------------------------------------------------
+    const section1 = {
+      id: 's1',
+      groups: [
+        {
+          title: "Strategi & timing",
+          items: [
+            "Handler jeg ud fra <strong>min strategi</strong> – og ikke mit humør?",
+            "Er det <strong>ikke fredag</strong>, eller har jeg en meget god grund?",
+            "Har jeg klart defineret <strong>indgangs- og udgangskurs</strong>?",
+            "Findes der <strong>bedre alternativer</strong> end et slagkøb (fx delkøb/DCA)?",
+            "Kan købet <strong>vente</strong>, eller er det reelt bare <strong>FOMO</strong>?"
+          ]
+        },
+        {
+          title: "Fundamentalt",
+          items: [
+            "Er det en <strong>udbytteaktie</strong>, og passer det til min strategi?",
+            "Er kursbevægelsen baseret på <strong>reel udvikling</strong> – og ikke kun en nyhed?",
+            "Matcher casen det <strong>overordnede forløb / trend</strong>?"
+          ]
+        },
+        {
+          title: "Valuta & aktietype",
+          items: [
+            "Er aktien handlet i <strong>EUR</strong>?",
+            "Er den handlet i <strong>DKK, SEK eller NOK</strong>?",
+            "Er det en <strong>A- eller B-aktie</strong>, og har jeg taget højde for forskellen?"
+          ]
+        },
+        {
+          title: "Risiko & portefølje",
+          items: [
+            "Passer <strong>positionens størrelse</strong> til min portefølje<br><em>(bliver én aktie for vigtig for mit humør?)</em>",
+            "Har jeg allerede <strong>for høj eksponering</strong> mod samme sektor eller tema?",
+            "Er <strong>likviditeten høj nok</strong> til, at jeg kan komme ud uden problemer?"
+          ]
+        },
+        {
+          title: "Exit & robusthed",
+          items: [
+            "Hvad er mit <strong>konkrete exit-scenarie</strong>, hvis jeg tager fejl?",
+            "Er der en <strong>kommende begivenhed</strong>, jeg reelt gambler på<br><em>(regnskab, rente, dom, FDA, guidance)?</em>",
+            "Hvad er det <strong>værste realistiske scenarie</strong> – og kan jeg leve med det?",
+            "Er casen stadig gyldig, hvis markedet falder <strong>5–10 %</strong>?"
+          ]
+        },
+        {
+          title: "Adfærd & bias",
+          items: [
+            "Køber jeg pga. <strong>andres overbevisning</strong> – eller min egen analyse?",
+            "Hvis jeg <strong>ikke ejede aktien i dag</strong> – ville jeg så købe den nu?"
+          ]
+        },
+        {
+          title: "Kvalitetssikring",
+          items: [
+            "Er <strong>alle oplysninger korrekt udfyldt og dobbelttjekket</strong>?"
+          ]
+        }
+      ]
+    };
+
+    const section2 = {
+      id: 's2',
+      items: [
+        "Handler jeg ud fra min strategi – ikke mit humør?",
+        "Har jeg en klar indgang og exit (kurs + plan)?",
+        "Er købet ikke drevet af FOMO, og kan det vente?",
+        "Findes der en bedre købsmetode end slagkøb (fx delkøb)?",
+        "Er casen baseret på reel udvikling – ikke kun en nyhed?",
+        "Matcher aktien det overordnede trend-/markedsforløb?",
+        "Passer positionens størrelse til min portefølje og psyke?",
+        "Har jeg et defineret stop/exit, hvis casen bryder?",
+        "Kan jeg leve med det værste realistiske scenarie?",
+        "Er der ingen binær begivenhed, jeg gambler på?",
+        "Er likviditet, valuta og aktietype bevidst valgt?",
+        "Hvis jeg ikke ejede aktien i dag – ville jeg så købe den nu?"
+      ]
+    };
+
+    // ---- State -------------------------------------------------------------
+    const answers = { s1: [], s2: [] }; // values: 'yes' | 'no' | 'unk' | undefined
+
+    // ---- Helpers -----------------------------------------------------------
+    function createButton(label, cls, onClick, ariaLabel) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = `btn ${cls}`;
+      b.textContent = label;
+      b.setAttribute('aria-label', ariaLabel || label);
+      b.addEventListener('click', onClick);
+      return b;
+    }
+
+    function setSelectionUI(questionEl, value) {
+      const yesBtn = questionEl.querySelector('.btn-yes');
+      const noBtn  = questionEl.querySelector('.btn-no');
+      const unkBtn = questionEl.querySelector('.btn-unk');
+      [yesBtn, noBtn, unkBtn].forEach(btn => {
+        if(!btn) return;
+        btn.classList.toggle('selected', btn.dataset.value === value);
+        btn.setAttribute('aria-pressed', String(btn.classList.contains('selected')));
+      });
+
+      const status = questionEl.querySelector('.status');
+      if(!value){
+        status.textContent = 'Status: —';
+      } else if(value==='yes'){
+        status.textContent = 'Status: Ja';
+      } else if(value==='no'){
+        status.textContent = 'Status: Nej';
+      } else {
+        status.textContent = 'Status: Ved ikke';
+      }
+    }
+
+    function updateCounters(sectionId) {
+      const arr = answers[sectionId];
+      let yes=0,no=0,unk=0,empty=0;
+      arr.forEach(v=>{
+        if(v==='yes') yes++;
+        else if(v==='no') no++;
+        else if(v==='unk') unk++;
+        else empty++;
+      });
+
+      const scope = document.getElementById(sectionId === 's1' ? 'section-1' : 'section-2');
+      scope.querySelector(`#${sectionId}-yes-pill strong`).textContent = String(yes);
+      scope.querySelector(`#${sectionId}-no-pill strong`).textContent  = String(no);
+      scope.querySelector(`#${sectionId}-unk-pill strong`).textContent = String(unk);
+      scope.querySelector(`#${sectionId}-empty-pill strong`).textContent= String(empty);
+
+      // Update global totals
+      const all = [...answers.s1, ...answers.s2];
+      let gYes=0,gNo=0,gUnk=0,gEmpty=0;
+      all.forEach(v=>{
+        if(v==='yes') gYes++;
+        else if(v==='no') gNo++;
+        else if(v==='unk') gUnk++;
+        else gEmpty++;
+      });
+      const totals = document.getElementById('totals');
+      totals.children[0].querySelector('strong').textContent = String(gYes);
+      totals.children[1].querySelector('strong').textContent = String(gNo);
+      totals.children[2].querySelector('strong').textContent = String(gUnk);
+      totals.children[3].querySelector('strong').textContent = String(gEmpty);
+    }
+
+    function handleClick(sectionId, index, value, questionEl){
+      // Toggle: click on already-selected clears it
+      const current = answers[sectionId][index];
+      answers[sectionId][index] = current === value ? undefined : value;
+      setSelectionUI(questionEl, answers[sectionId][index]);
+      updateCounters(sectionId);
+    }
+
+    // ---- Renderers ---------------------------------------------------------
+    function renderSection1() {
+      const host = document.getElementById('s1-groups');
+      let counter = 0;
+      section1.groups.forEach(group=>{
+        const gEl = document.createElement('div');
+        gEl.className = 'group';
+        const h = document.createElement('h3');
+        h.className='group-title';
+        h.innerHTML = group.title;
+        gEl.appendChild(h);
+
+        group.items.forEach(text=>{
+          const idx = counter++;
+          const q = document.createElement('div');
+          q.className = 'question';
+          q.dataset.section='s1';
+          q.dataset.index=String(idx);
+
+          const left = document.createElement('div');
+          left.className = 'q-left';
+          const badge = document.createElement('div');
+          badge.className='q-index';
+          badge.textContent = String(idx+1);
+          const p = document.createElement('div');
+          p.className='q-text';
+          p.innerHTML = text;
+          left.appendChild(badge);
+          left.appendChild(p);
+
+          const actions = document.createElement('div');
+          actions.className='q-actions';
+
+          const status = document.createElement('span');
+          status.className='status';
+          status.textContent='Status: —';
+
+          const yes = createButton('Ja','btn-yes small',()=>handleClick('s1', idx, 'yes', q), 'Svar Ja');
+          yes.dataset.value='yes';
+          const no  = createButton('Nej','btn-no small',()=>handleClick('s1', idx, 'no', q), 'Svar Nej');
+          no.dataset.value='no';
+          const unk = createButton('Ved ikke','btn-unk small',()=>handleClick('s1', idx, 'unk', q), 'Svar Ved ikke');
+          unk.dataset.value='unk';
+
+          actions.append(yes,no,unk,status);
+
+          q.append(left, actions);
+          host.appendChild(q);
+        });
+
+        host.appendChild(gEl);
+      });
+
+      // init answers
+      answers.s1 = new Array(counter).fill(undefined);
+      updateCounters('s1');
+    }
+
+    function renderSection2() {
+      const host = document.getElementById('s2-list');
+      const wrapper = document.createElement('div');
+      wrapper.className='group';
+
+      section2.items.forEach((text, i)=>{
+        const q = document.createElement('div');
+        q.className='question';
+        q.dataset.section='s2';
+        q.dataset.index=String(i);
+
+        const left = document.createElement('div');
+        left.className='q-left';
+        const badge = document.createElement('div');
+        badge.className='q-index';
+        badge.textContent = String(i+1);
+        const p = document.createElement('div');
+        p.className='q-text';
+        p.textContent = text;
+        left.append(badge,p);
+
+        const actions = document.createElement('div');
+        actions.className='q-actions';
+
+        const status = document.createElement('span');
+        status.className='status';
+        status.textContent='Status: —';
+
+        const yes = createButton('Ja','btn-yes small',()=>handleClick('s2', i, 'yes', q), 'Svar Ja');
+        yes.dataset.value='yes';
+        const no  = createButton('Nej','btn-no small',()=>handleClick('s2', i, 'no', q), 'Svar Nej');
+        no.dataset.value='no';
+        const unk = createButton('Ved ikke','btn-unk small',()=>handleClick('s2', i, 'unk', q), 'Svar Ved ikke');
+        unk.dataset.value='unk';
+
+        actions.append(yes,no,unk,status);
+        q.append(left,actions);
+        wrapper.appendChild(q);
+      });
+
+      host.appendChild(wrapper);
+
+      // init answers
+      answers.s2 = new Array(section2.items.length).fill(undefined);
+      updateCounters('s2');
+    }
+
+    function wireResets(){
+      document.querySelectorAll('.reset').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const sec = btn.dataset.reset;
+          answers[sec] = answers[sec].map(()=>undefined);
+          document.querySelectorAll(`[data-section="${sec}"]`).forEach(q=>{
+            setSelectionUI(q, undefined);
+          });
+          updateCounters(sec);
+        });
+      });
+    }
+
+    // ---- Init --------------------------------------------------------------
+    renderSection1();
+    renderSection2();
+    wireResets();
+  </script>
 </body>
 </html>
