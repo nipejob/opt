@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="da">
 <head>
@@ -9,22 +10,18 @@
 :root{
   --bg:#f0f1f3;
   --panel:#ffffff;
-  --text:#1f2937;
   --green:#2e7d32;
   --red:#e53935;
   --yellow:#f9a825;
   --blue:#1565c0;
   --orange:#ef6c00;
-  --gray:#9ca3af;
-  --radius:12px;
+  --radius:14px;
 }
 
-*{box-sizing:border-box}
 body{
   margin:0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background:var(--bg);
-  color:var(--text);
 }
 
 .container{
@@ -34,22 +31,18 @@ body{
 }
 
 .section{
-  background:var(--panel);
+  background:#fff;
   border-radius:var(--radius);
   padding:24px;
   margin-bottom:30px;
-  box-shadow:0 10px 30px rgba(0,0,0,.06);
+  box-shadow:0 12px 30px rgba(0,0,0,.06);
 }
-
-h1,h2{margin-top:0}
 
 .group{
   border:2px solid #ffd7b5;
   border-radius:14px;
   padding:14px;
   margin-bottom:18px;
-  background:#fff;
-  transition:.2s;
 }
 
 .group.complete{
@@ -58,82 +51,55 @@ h1,h2{margin-top:0}
 }
 
 .group-head{
-  display:flex;
-  align-items:center;
-  gap:10px;
   font-weight:800;
   color:var(--orange);
+  display:flex;
+  align-items:center;
 }
 
-.group.complete .group-head{
-  color:var(--green);
-}
+.group.complete .group-head{color:var(--green)}
 
 .badge{
   margin-left:auto;
   padding:4px 10px;
   border-radius:999px;
-  font-size:.8rem;
   background:#d7f0dc;
-  color:#155724;
+  font-size:.8rem;
   display:none;
 }
 
 .group.complete .badge{display:inline-block}
 
 .question{
-  border:1px solid #e5e7eb;
-  border-radius:12px;
-  padding:12px;
   margin-top:10px;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #e5e7eb;
   background:#fafafa;
   display:grid;
   grid-template-columns:1fr auto;
   gap:10px;
 }
 
-.question.correct{
-  background:#e8f5e9;
-  border:2px solid var(--green);
-}
+.question.correct{border:2px solid var(--green);background:#e8f5e9}
+.question.wrong{border:2px solid var(--red);background:#fdecea}
 
-.question.wrong{
-  background:#fdecea;
-  border:2px solid var(--red);
-}
-
-.q-left{
-  display:flex;
-  gap:10px;
-}
-
+.q-left{display:flex;gap:10px}
 .q-num{
-  width:28px;
-  height:28px;
-  border-radius:6px;
+  width:28px;height:28px;
   background:#bbdefb;
-  font-weight:800;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.q-icon{
-  width:28px;
-  height:28px;
   border-radius:6px;
-  background:#fff;
+  font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+}
+.q-icon{
+  width:28px;height:28px;
+  border-radius:6px;
   border:1px solid #ddd;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
 }
 
-.actions{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
 
 .btn{
   border:none;
@@ -142,7 +108,6 @@ h1,h2{margin-top:0}
   font-weight:700;
   cursor:pointer;
 }
-
 .yes{background:var(--green);color:#fff}
 .no{background:var(--red);color:#fff}
 .unk{background:var(--yellow)}
@@ -152,16 +117,21 @@ h1,h2{margin-top:0}
   display:none;
   margin-top:30px;
 }
-
 #final-banner div{
-  padding:26px;
-  border-radius:18px;
+  padding:28px;
+  border-radius:20px;
   background:linear-gradient(135deg,#2e7d32,#66bb6a);
   color:white;
   text-align:center;
   font-size:1.6rem;
   font-weight:900;
-  box-shadow:0 15px 40px rgba(0,0,0,.3);
+  box-shadow:0 18px 40px rgba(0,0,0,.3);
+}
+
+input{
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
 </style>
 </head>
@@ -174,9 +144,31 @@ h1,h2{margin-top:0}
 
 <div id="groups"></div>
 
+<div class="section">
+<h2>📄 PDF‑eksport</h2>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+  <div>
+    <label><strong>Firma</strong></label><br>
+    <input id="pdf-firma" placeholder="Fx Novo Nordisk">
+  </div>
+  <div>
+    <label><strong>Ticker</strong></label><br>
+    <input id="pdf-ticker" placeholder="Fx NOVO">
+  </div>
+  <div>
+    <label><strong>Kurs</strong></label><br>
+    <input id="pdf-kurs" placeholder="Fx 945,50">
+  </div>
+  <button onclick="exportPDF()" class="btn check" style="align-self:flex-end">
+    ⬇ Download PDF
+  </button>
+</div>
+<p style="font-size:.9rem;color:#555">Dato indsættes automatisk.</p>
+</div>
+
 <div id="final-banner">
   <div>
-    ✅ OKAY TIL KØB / SLAG  
+    ✅ OKAY TIL KØB / SLAG
     <div style="font-size:1rem;font-weight:500;margin-top:8px">
       Alle 21 punkter er korrekt vurderet
     </div>
@@ -185,8 +177,32 @@ h1,h2{margin-top:0}
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-// ---------- FACIT ----------
+const QUESTIONS = [
+ "Handler jeg ud fra min strategi – og ikke mit humør?",
+ "Er det ikke fredag, eller har jeg en meget god grund?",
+ "Har jeg klart defineret indgangs- og udgangskurs?",
+ "Findes der bedre alternativer end slagkøb (fx delkøb/DCA)?",
+ "Kan købet vente, eller er det reelt bare FOMO?",
+ "Er det en udbytteaktie, og passer det til min strategi?",
+ "Er kursbevægelsen baseret på reel udvikling – ikke kun en nyhed?",
+ "Matcher casen det overordnede forløb / trend?",
+ "Er aktien handlet i EUR?",
+ "Er den handlet i DKK, SEK eller NOK?",
+ "Er det en A- eller B-aktie, og har jeg taget højde for forskellen?",
+ "Passer positionens størrelse til min portefølje?",
+ "Har jeg allerede for høj eksponering mod samme sektor?",
+ "Er likviditeten høj nok til, at jeg kan komme ud?",
+ "Hvad er mit konkrete exit-scenarie, hvis jeg tager fejl?",
+ "Er der en kommende begivenhed, jeg gambler på?",
+ "Hvad er det værste realistiske scenarie – og kan jeg leve med det?",
+ "Er casen stadig gyldig ved 5–10 % market drawdown?",
+ "Køber jeg pga. andres overbevisning – eller min egen analyse?",
+ "Hvis jeg ikke ejede aktien i dag – ville jeg så købe den nu?",
+ "Er alle oplysninger korrekt udfyldt og dobbelttjekket?"
+];
+
 const ANSWER_KEY = [
  'yes','yes','yes','unk','no',
  'yes','yes','yes','no','yes',
@@ -194,92 +210,72 @@ const ANSWER_KEY = [
  'no','yes','yes','yes','yes','yes'
 ];
 
-// ---------- DATA ----------
-const groups = [
- {title:"Strategi & timing", items:5},
- {title:"Fundamentalt", items:3},
- {title:"Valuta & aktietype", items:3},
- {title:"Risiko & portefølje", items:3},
- {title:"Exit & robusthed", items:4},
- {title:"Adfærd & bias", items:2},
- {title:"Kvalitetssikring", items:1}
-];
-
 const answers = [];
-let qIndex = 0;
-
-// ---------- RENDER ----------
 const host = document.getElementById("groups");
 
-groups.forEach(g=>{
-  const gEl = document.createElement("div");
-  gEl.className="group";
-
-  const head = document.createElement("div");
-  head.className="group-head";
-  head.innerHTML = g.title + '<span class="badge">✅ Afsluttet</span>';
-  gEl.appendChild(head);
-
-  const idxs=[];
-
-  for(let i=0;i<g.items;i++){
-    const idx = qIndex++;
-    idxs.push(idx);
-    answers[idx]=null;
-
-    const q = document.createElement("div");
-    q.className="question";
-    q.dataset.index=idx;
-
-    q.innerHTML = `
-      <div class="q-left">
-        <div class="q-num">${idx+1}</div>
-        <div class="q-icon">💰</div>
-        <div>Spørgsmål ${idx+1}</div>
-      </div>
-      <div class="actions">
-        <button class="btn yes">Ja</button>
-        <button class="btn no">Nej</button>
-        <button class="btn unk">Ved ikke</button>
-        <button class="btn check">Tjek</button>
-      </div>
-    `;
-
-    const [bYes,bNo,bUnk,bCheck] = q.querySelectorAll("button");
-
-    bYes.onclick = ()=> answers[idx]='yes';
-    bNo.onclick  = ()=> answers[idx]='no';
-    bUnk.onclick = ()=> answers[idx]='unk';
-
-    bCheck.onclick = ()=>{
-      if(!answers[idx]) return alert("Svar først");
-      q.classList.remove("correct","wrong");
-      if(answers[idx]===ANSWER_KEY[idx]){
-        q.classList.add("correct");
-      } else {
-        q.classList.add("wrong");
-      }
-      update();
-    };
-
-    gEl.appendChild(q);
-  }
-
-  gEl.dataset.idxs = idxs.join(",");
-  host.appendChild(gEl);
+QUESTIONS.forEach((q,i)=>{
+  answers[i]=null;
+  const el = document.createElement("div");
+  el.className="question";
+  el.innerHTML = `
+    <div class="q-left">
+      <div class="q-num">${i+1}</div>
+      <div class="q-icon">💰</div>
+      <div>${q}</div>
+    </div>
+    <div class="actions">
+      <button class="btn yes">Ja</button>
+      <button class="btn no">Nej</button>
+      <button class="btn unk">Ved ikke</button>
+      <button class="btn check">Tjek</button>
+    </div>`;
+  const [bYes,bNo,bUnk,bCheck] = el.querySelectorAll("button");
+  bYes.onclick=()=>answers[i]='yes';
+  bNo.onclick =()=>answers[i]='no';
+  bUnk.onclick=()=>answers[i]='unk';
+  bCheck.onclick=()=>{
+    if(!answers[i]) return alert("Svar først");
+    el.classList.remove("correct","wrong");
+    el.classList.add(answers[i]===ANSWER_KEY[i]?"correct":"wrong");
+    updateFinal();
+  };
+  host.appendChild(el);
 });
 
-// ---------- LOGIK ----------
-function update(){
-  document.querySelectorAll(".group").forEach(g=>{
-    const idxs = g.dataset.idxs.split(",").map(Number);
-    const done = idxs.every(i=>answers[i] && answers[i]===ANSWER_KEY[i]);
-    g.classList.toggle("complete", done);
-  });
+function updateFinal(){
+  const ok = answers.every((a,i)=>a && a===ANSWER_KEY[i]);
+  document.getElementById("final-banner").style.display = ok?"block":"none";
+}
 
-  const allCorrect = answers.every((a,i)=>a && a===ANSWER_KEY[i]);
-  document.getElementById("final-banner").style.display =
-    allCorrect ? "block" : "none";
+function exportPDF(){
+  if(!answers.every((a,i)=>a && a===ANSWER_KEY[i]))
+    return alert("Checklist skal være godkendt.");
+
+  const firma=document.getElementById("pdf-firma").value;
+  const kurs=document.getElementById("pdf-kurs").value;
+  const ticker=document.getElementById("pdf-ticker").value;
+
+  if(!firma||!kurs||!ticker) return alert("Udfyld firma, ticker og kurs.");
+
+  const dato = new Date().toISOString().slice(0,10);
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+
+  let y=14;
+  doc.setFontSize(16);
+  doc.text("Aktie – Forberedelsesskema",14,y);
+  y+=10;
+  doc.setFontSize(11);
+  doc.text(`Firma: ${firma}`,14,y); y+=6;
+  doc.text(`Ticker: ${ticker}`,14,y); y+=6;
+  doc.text(`Kurs: ${kurs}`,14,y); y+=6;
+  doc.text(`Dato: ${dato}`,14,y);
+
+  y+=10;
+  doc.text("✅ OKAY TIL KØB / SLAG",14,y);
+
+  const filename = `${dato}_${ticker}_Forberedelsesskema.pdf`;
+  doc.save(filename);
 }
 </script>
 </body>
