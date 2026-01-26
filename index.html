@@ -1,651 +1,286 @@
 <!doctype html>
 <html lang="da">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Aktie-checkliste</title>
-  <style>
-    :root{
-      --bg:#f0f1f3;            /* grå baggrund */
-      --panel:#ffffff;         /* kort/panel */
-      --text:#1f2937;
-      --muted:#6b7280;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nikolaj – Aktie forberedelsesskema</title>
 
-      --green:#2e7d32;         /* Ja */
-      --green-600:#27642a;
-      --green-200:#a5d6a7;
+<style>
+:root{
+  --bg:#f0f1f3;
+  --panel:#ffffff;
+  --text:#1f2937;
+  --green:#2e7d32;
+  --red:#e53935;
+  --yellow:#f9a825;
+  --blue:#1565c0;
+  --orange:#ef6c00;
+  --gray:#9ca3af;
+  --radius:12px;
+}
 
-      --red:#e53935;           /* Nej – klar rød */
-      --red-600:#c62828;
-      --red-200:#ef9a9a;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
 
-      --yellow:#f9a825;        /* Ved ikke */
-      --yellow-600:#f57f17;
-      --yellow-200:#ffe082;
-      --yellow-text:#1f2937;
+.container{
+  max-width:1000px;
+  margin:30px auto;
+  padding:0 16px;
+}
 
-      --blue:#1565c0;          /* overskrifter/accenter */
-      --blue-200:#90caf9;
+.section{
+  background:var(--panel);
+  border-radius:var(--radius);
+  padding:24px;
+  margin-bottom:30px;
+  box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
 
-      --orange:#ef6c00;        /* gruppe-accent */
-      --orange-200:#ffcc80;
+h1,h2{margin-top:0}
 
-      --gray-200:#f3f4f6;
-      --gray-300:#e5e7eb;
-      --gray-500:#9ca3af;
+.group{
+  border:2px solid #ffd7b5;
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:18px;
+  background:#fff;
+  transition:.2s;
+}
 
-      --radius:12px;
-    }
+.group.complete{
+  background:#e8f5e9;
+  border-color:#a5d6a7;
+}
 
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-      background:var(--bg); color:var(--text); line-height:1.45;
-    }
-    .container{
-      max-width:980px; margin:28px auto; padding:0 16px;
-    }
+.group-head{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:800;
+  color:var(--orange);
+}
 
-    .section{
-      background:var(--panel);
-      border-radius:var(--radius);
-      box-shadow:0 8px 24px rgba(0,0,0,.05);
-      padding:24px; margin:18px 0 28px;
-      border:1px solid var(--gray-300);
-    }
-    .sec-head{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
-    .sec-title{
-      margin:0; font-size:1.35rem; color:var(--blue);
-      display:flex; align-items:center; gap:10px;
-    }
-    .sec-sub{ margin:0; color:var(--muted); font-style:italic; }
+.group.complete .group-head{
+  color:var(--green);
+}
 
-    .controls{
-      display:flex; flex-wrap:wrap; align-items:center; gap:8px;
-      margin:8px 0 14px;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px; font-size:.9rem; font-weight:600; color:#fff;
-    }
-    .pill.gray{ background:var(--gray-500) }
-    .pill.green{ background:var(--green) }
-    .pill.red{ background:var(--red) }
-    .pill.yellow{ background:var(--yellow); color:var(--yellow-text) }
-    .pill.blue{ background:var(--blue) }
-    .pill.orange{ background:var(--orange) }
+.badge{
+  margin-left:auto;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:.8rem;
+  background:#d7f0dc;
+  color:#155724;
+  display:none;
+}
 
-    .btn{
-      border:none; border-radius:10px; padding:8px 12px; font-weight:700; color:#fff;
-      cursor:pointer; transition:transform .03s ease, box-shadow .15s ease, filter .15s ease;
-      box-shadow:0 2px 10px rgba(0,0,0,.08);
-    }
-    .btn:active{ transform:translateY(1px) }
-    .btn.small{ padding:6px 10px; font-weight:600 }
+.group.complete .badge{display:inline-block}
 
-    .btn-yes{ background:var(--green) }
-    .btn-yes:hover{ filter:brightness(1.05) }
-    .btn-yes.selected{ outline:3px solid var(--green-200); box-shadow:0 0 0 3px rgba(46,125,50,.2) inset }
+.question{
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:12px;
+  margin-top:10px;
+  background:#fafafa;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+}
 
-    .btn-no{ background:var(--red) }
-    .btn-no:hover{ filter:brightness(1.05) }
-    .btn-no.selected{ outline:3px solid var(--red-200); box-shadow:0 0 0 3px rgba(229,57,53,.2) inset }
+.question.correct{
+  background:#e8f5e9;
+  border:2px solid var(--green);
+}
 
-    .btn-unk{ background:var(--yellow); color:var(--yellow-text) }
-    .btn-unk:hover{ filter:brightness(1.05) }
-    .btn-unk.selected{ outline:3px solid var(--yellow-200); box-shadow:0 0 0 3px rgba(249,168,37,.2) inset }
+.question.wrong{
+  background:#fdecea;
+  border:2px solid var(--red);
+}
 
-    /* Afsnit / grupper */
-    .groups{ display:flex; flex-direction:column; gap:14px; }
-    .group{
-      padding:14px; border:2px solid var(--orange-200); border-radius:12px; background:#fff;
-      transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-    .group-head{
-      display:flex; align-items:center; gap:10px; margin:0 0 8px;
-    }
-    .group-title{
-      margin:0; font-weight:800; color:var(--orange); font-size:1.05rem; flex:1;
-    }
-    .group-progress{ margin-left:auto; }
-    .group-complete{
-      background: #eef8f0; /* grønt/lys når alt besvaret */
-      border-color: var(--green-200);
-      box-shadow: 0 0 0 3px rgba(46,125,50,.08) inset;
-    }
-    .group-complete .group-title{ color: var(--green-600); }
-    .group-complete .badge-complete{ display:inline-flex; }
+.q-left{
+  display:flex;
+  gap:10px;
+}
 
-    .badge-complete{
-      display:none; align-items:center; gap:6px; padding:4px 8px;
-      border-radius:999px; font-weight:800; font-size:.82rem;
-      background:#d7f0dc; color:#155724; border:1px solid #a5d6a7;
-    }
+.q-num{
+  width:28px;
+  height:28px;
+  border-radius:6px;
+  background:#bbdefb;
+  font-weight:800;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .question{
-      display:grid; grid-template-columns: 1fr auto; gap:8px 12px;
-      padding:12px 10px; margin:6px 0; border:1px solid var(--gray-300); border-radius:12px;
-      background:#fafafa; transition: background-color .2s ease, border-color .2s ease;
-    }
-    .question.answered{ background:#f3faf4; border-color:#cde9d0; }
+.q-icon{
+  width:28px;
+  height:28px;
+  border-radius:6px;
+  background:#fff;
+  border:1px solid #ddd;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .q-left{ display:flex; gap:10px; align-items:flex-start }
-    .q-index{
-      flex:0 0 auto; min-width:28px; height:28px; border-radius:7px;
-      background:var(--blue-200); color:#0f172a; font-weight:800;
-      display:inline-flex; align-items:center; justify-content:center; font-size:.9rem;
-      margin-top:2px;
-    }
-    .q-icon{
-      width:28px; height:28px; border-radius:7px; display:inline-flex; align-items:center; justify-content:center;
-      background: #fff; border:1px solid var(--gray-300); font-size:1rem; user-select:none;
-      margin-top:2px;
-    }
-    .q-text{ margin:0; }
-    .q-actions{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .status{
-      padding:4px 8px; border-radius:999px; font-size:.82rem; font-weight:700;
-      background:#eef2f7; color:#374151; border:1px dashed var(--gray-300);
-    }
+.actions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
 
-    .counters{
-      display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;
-    }
-    .hr{
-      height:3px; background:linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
-      border-radius:3px; margin:12px 0 6px;
-    }
-    .blockquote{
-      border-left:5px solid var(--blue); padding:10px 14px; background:#f6fbff; border-radius:0 10px 10px 0;
-      margin:12px 0 0; color:#0f172a; font-weight:600;
-    }
-    .topbar{
-      display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
-    }
-    .reset{
-      background:#ffffff; color:#111827; border:2px solid var(--gray-300);
-      padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:700;
-    }
-    .reset:hover{ filter:brightness(0.98) }
+.btn{
+  border:none;
+  border-radius:8px;
+  padding:6px 10px;
+  font-weight:700;
+  cursor:pointer;
+}
 
-    .toolbar{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:8px 0 0;
-    }
-    .select{
-      appearance:none; -webkit-appearance:none; -moz-appearance:none;
-      background:#fff; border:1px solid var(--gray-300); padding:6px 10px; border-radius:10px; font-weight:600;
-    }
+.yes{background:var(--green);color:#fff}
+.no{background:var(--red);color:#fff}
+.unk{background:var(--yellow)}
+.check{background:var(--blue);color:#fff}
 
-    @media (max-width:680px){
-      .question{ grid-template-columns: 1fr }
-      .q-actions{ justify-content:flex-start }
-    }
-  </style>
+#final-banner{
+  display:none;
+  margin-top:30px;
+}
+
+#final-banner div{
+  padding:26px;
+  border-radius:18px;
+  background:linear-gradient(135deg,#2e7d32,#66bb6a);
+  color:white;
+  text-align:center;
+  font-size:1.6rem;
+  font-weight:900;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <!-- Global top tools -->
-    <div class="section" style="padding:16px">
-      <div class="topbar" style="margin-bottom:0">
-        <h2 class="sec-title" style="font-size:1.1rem">Visuelle indstillinger</h2>
-        <div class="toolbar">
-          <label for="theme" class="pill blue" style="cursor:default">Tema</label>
-          <select id="theme" class="select" aria-label="Vælg ikon-tema">
-            <option value="penge">💰 Penge</option>
-            <option value="frugt">🍎 Frugter</option>
-          </select>
-        </div>
-      </div>
+<div class="container">
+
+<h1>🧠 Aktie‑checkliste før køb</h1>
+<p><em>Nikolaj – Forberedelsesskema</em></p>
+
+<div id="groups"></div>
+
+<div id="final-banner">
+  <div>
+    ✅ OKAY TIL KØB / SLAG  
+    <div style="font-size:1rem;font-weight:500;margin-top:8px">
+      Alle 21 punkter er korrekt vurderet
     </div>
-
-    <!-- Sektion 1 -->
-    <section class="section" id="section-1">
-      <div class="topbar">
-        <div class="sec-head">
-          <h2 class="sec-title">🧠 Aktie-checkliste før køb</h2>
-          <p class="sec-sub">Alle relevante punkter skal kunne besvares ærligt.</p>
-        </div>
-        <button class="reset" data-reset="s1" aria-label="Nulstil sektion 1">Nulstil</button>
-      </div>
-
-      <div class="controls">
-        <span class="pill green" id="s1-yes-pill">Ja: <strong>0</strong></span>
-        <span class="pill red" id="s1-no-pill">Nej: <strong>0</strong></span>
-        <span class="pill yellow" id="s1-unk-pill">Ved ikke: <strong>0</strong></span>
-        <span class="pill gray" id="s1-empty-pill">Ubesvaret: <strong>0</strong></span>
-      </div>
-
-      <div class="hr"></div>
-
-      <div id="s1-groups" class="groups"></div>
-
-      <div class="blockquote">
-        Tommelregel: Hvis ét centralt punkt giver tvivl → <strong>ingen handel i dag</strong>.
-      </div>
-    </section>
-
-    <!-- Sektion 2 -->
-    <section class="section" id="section-2">
-      <div class="topbar">
-        <div class="sec-head">
-          <h2 class="sec-title">Aktie-checkliste (12 must-have før køb)</h2>
-        </div>
-        <button class="reset" data-reset="s2" aria-label="Nulstil sektion 2">Nulstil</button>
-      </div>
-
-      <div class="controls">
-        <span class="pill green" id="s2-yes-pill">Ja: <strong>0</strong></span>
-        <span class="pill red" id="s2-no-pill">Nej: <strong>0</strong></span>
-        <span class="pill yellow" id="s2-unk-pill">Ved ikke: <strong>0</strong></span>
-        <span class="pill gray" id="s2-empty-pill">Ubesvaret: <strong>0</strong></span>
-      </div>
-
-      <div class="hr"></div>
-      <div id="s2-list" class="groups"></div>
-
-      <div class="pill orange" style="margin-top:10px">Tip: Brug denne som hurtig “go/no-go”.</div>
-    </section>
-
-    <!-- Samlet tælling -->
-    <section class="section">
-      <h3 class="sec-title" style="font-size:1.1rem">Samlet optælling</h3>
-      <div class="controls" id="totals">
-        <span class="pill green">Ja samlet: <strong>0</strong></span>
-        <span class="pill red">Nej samlet: <strong>0</strong></span>
-        <span class="pill yellow">Ved ikke samlet: <strong>0</strong></span>
-        <span class="pill gray">Ubesvaret samlet: <strong>0</strong></span>
-      </div>
-    </section>
   </div>
+</div>
 
-  <script>
-    // ---------------- Data ---------------------------------------------------
-    const section1 = {
-      id: 's1',
-      groups: [
-        {
-          title: "Strategi & timing",
-          items: [
-            "Handler jeg ud fra <strong>min strategi</strong> – og ikke mit humør?",
-            "Er det <strong>ikke fredag</strong>, eller har jeg en meget god grund?",
-            "Har jeg klart defineret <strong>indgangs- og udgangskurs</strong>?",
-            "Findes der <strong>bedre alternativer</strong> end et slagkøb (fx delkøb/DCA)?",
-            "Kan købet <strong>vente</strong>, eller er det reelt bare <strong>FOMO</strong>?"
-          ]
-        },
-        {
-          title: "Fundamentalt",
-          items: [
-            "Er det en <strong>udbytteaktie</strong>, og passer det til min strategi?",
-            "Er kursbevægelsen baseret på <strong>reel udvikling</strong> – og ikke kun en nyhed?",
-            "Matcher casen det <strong>overordnede forløb / trend</strong>?"
-          ]
-        },
-        {
-          title: "Valuta & aktietype",
-          items: [
-            "Er aktien handlet i <strong>EUR</strong>?",
-            "Er den handlet i <strong>DKK, SEK eller NOK</strong>?",
-            "Er det en <strong>A- eller B-aktie</strong>, og har jeg taget højde for forskellen?"
-          ]
-        },
-        {
-          title: "Risiko & portefølje",
-          items: [
-            "Passer <strong>positionens størrelse</strong> til min portefølje<br><em>(bliver én aktie for vigtig for mit humør?)</em>",
-            "Har jeg allerede <strong>for høj eksponering</strong> mod samme sektor eller tema?",
-            "Er <strong>likviditeten høj nok</strong> til, at jeg kan komme ud uden problemer?"
-          ]
-        },
-        {
-          title: "Exit & robusthed",
-          items: [
-            "Hvad er mit <strong>konkrete exit-scenarie</strong>, hvis jeg tager fejl?",
-            "Er der en <strong>kommende begivenhed</strong>, jeg reelt gambler på<br><em>(regnskab, rente, dom, FDA, guidance)?</em>",
-            "Hvad er det <strong>værste realistiske scenarie</strong> – og kan jeg leve med det?",
-            "Er casen stadig gyldig, hvis markedet falder <strong>5–10 %</strong>?"
-          ]
-        },
-        {
-          title: "Adfærd & bias",
-          items: [
-            "Køber jeg pga. <strong>andres overbevisning</strong> – eller min egen analyse?",
-            "Hvis jeg <strong>ikke ejede aktien i dag</strong> – ville jeg så købe den nu?"
-          ]
-        },
-        {
-          title: "Kvalitetssikring",
-          items: [
-            "Er <strong>alle oplysninger korrekt udfyldt og dobbelttjekket</strong>?"
-          ]
-        }
-      ]
-    };
+</div>
 
-    const section2 = {
-      id: 's2',
-      items: [
-        "Handler jeg ud fra min strategi – ikke mit humør?",
-        "Har jeg en klar indgang og exit (kurs + plan)?",
-        "Er købet ikke drevet af FOMO, og kan det vente?",
-        "Findes der en bedre købsmetode end slagkøb (fx delkøb)?",
-        "Er casen baseret på reel udvikling – ikke kun en nyhed?",
-        "Matcher aktien det overordnede trend-/markedsforløb?",
-        "Passer positionens størrelse til min portefølje og psyke?",
-        "Har jeg et defineret stop/exit, hvis casen bryder?",
-        "Kan jeg leve med det værste realistiske scenarie?",
-        "Er der ingen binær begivenhed, jeg gambler på?",
-        "Er likviditet, valuta og aktietype bevidst valgt?",
-        "Hvis jeg ikke ejede aktien i dag – ville jeg så købe den nu?"
-      ]
-    };
+<script>
+// ---------- FACIT ----------
+const ANSWER_KEY = [
+ 'yes','yes','yes','unk','no',
+ 'yes','yes','yes','no','yes',
+ 'yes','yes','no','yes','unk',
+ 'no','yes','yes','yes','yes','yes'
+];
 
-    // ---------------- Theme (ikoner) ---------------------------------------
-    const ICONS = {
-      penge: ['💰','📈','🪙','💹','🏦','💵','💳','📊','🧾','💼','📉','💸','🏛️','💱','🧮','🔍','🛡️','✅','📈','💰','💳','💹'],
-      frugt: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍒','🍍','🥝','🍑','🥭','🍈','🍏','🍎','🍇','🍓','🍍','🍊','🍒']
-    };
-    let currentTheme = 'penge';
+// ---------- DATA ----------
+const groups = [
+ {title:"Strategi & timing", items:5},
+ {title:"Fundamentalt", items:3},
+ {title:"Valuta & aktietype", items:3},
+ {title:"Risiko & portefølje", items:3},
+ {title:"Exit & robusthed", items:4},
+ {title:"Adfærd & bias", items:2},
+ {title:"Kvalitetssikring", items:1}
+];
 
-    // ---------------- State --------------------------------------------------
-    // values: 'yes' | 'no' | 'unk' | undefined
-    const answers = { s1: [], s2: [] };
+const answers = [];
+let qIndex = 0;
 
-    // For at opmelde grupper (afsnit) i s1 og én gruppe i s2
-    const groupMeta = { s1: [], s2: [] }; // vil holde refs til DOM for grupper og deres spørgsmåls-indeks
+// ---------- RENDER ----------
+const host = document.getElementById("groups");
 
-    // ---------------- Helpers -----------------------------------------------
-    function createButton(label, cls, onClick, ariaLabel) {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = `btn ${cls}`;
-      b.textContent = label;
-      b.setAttribute('aria-label', ariaLabel || label);
-      b.addEventListener('click', onClick);
-      return b;
-    }
+groups.forEach(g=>{
+  const gEl = document.createElement("div");
+  gEl.className="group";
 
-    function setSelectionUI(questionEl, value) {
-      const yesBtn = questionEl.querySelector('.btn-yes');
-      const noBtn  = questionEl.querySelector('.btn-no');
-      const unkBtn = questionEl.querySelector('.btn-unk');
-      [yesBtn, noBtn, unkBtn].forEach(btn => {
-        if(!btn) return;
-        btn.classList.toggle('selected', btn.dataset.value === value);
-        btn.setAttribute('aria-pressed', String(btn.classList.contains('selected')));
-      });
+  const head = document.createElement("div");
+  head.className="group-head";
+  head.innerHTML = g.title + '<span class="badge">✅ Afsluttet</span>';
+  gEl.appendChild(head);
 
-      const status = questionEl.querySelector('.status');
-      if(!value){
-        status.textContent = 'Status: —';
-        questionEl.classList.remove('answered');
-      } else if(value==='yes'){
-        status.textContent = 'Status: Ja';
-        questionEl.classList.add('answered');
-      } else if(value==='no'){
-        status.textContent = 'Status: Nej';
-        questionEl.classList.add('answered');
+  const idxs=[];
+
+  for(let i=0;i<g.items;i++){
+    const idx = qIndex++;
+    idxs.push(idx);
+    answers[idx]=null;
+
+    const q = document.createElement("div");
+    q.className="question";
+    q.dataset.index=idx;
+
+    q.innerHTML = `
+      <div class="q-left">
+        <div class="q-num">${idx+1}</div>
+        <div class="q-icon">💰</div>
+        <div>Spørgsmål ${idx+1}</div>
+      </div>
+      <div class="actions">
+        <button class="btn yes">Ja</button>
+        <button class="btn no">Nej</button>
+        <button class="btn unk">Ved ikke</button>
+        <button class="btn check">Tjek</button>
+      </div>
+    `;
+
+    const [bYes,bNo,bUnk,bCheck] = q.querySelectorAll("button");
+
+    bYes.onclick = ()=> answers[idx]='yes';
+    bNo.onclick  = ()=> answers[idx]='no';
+    bUnk.onclick = ()=> answers[idx]='unk';
+
+    bCheck.onclick = ()=>{
+      if(!answers[idx]) return alert("Svar først");
+      q.classList.remove("correct","wrong");
+      if(answers[idx]===ANSWER_KEY[idx]){
+        q.classList.add("correct");
       } else {
-        status.textContent = 'Status: Ved ikke';
-        questionEl.classList.add('answered');
+        q.classList.add("wrong");
       }
-    }
+      update();
+    };
 
-    function updateCounters(sectionId) {
-      const arr = answers[sectionId];
-      let yes=0,no=0,unk=0,empty=0;
-      arr.forEach(v=>{
-        if(v==='yes') yes++;
-        else if(v==='no') no++;
-        else if(v==='unk') unk++;
-        else empty++;
-      });
+    gEl.appendChild(q);
+  }
 
-      const scope = document.getElementById(sectionId === 's1' ? 'section-1' : 'section-2');
-      scope.querySelector(`#${sectionId}-yes-pill strong`).textContent = String(yes);
-      scope.querySelector(`#${sectionId}-no-pill strong`).textContent  = String(no);
-      scope.querySelector(`#${sectionId}-unk-pill strong`).textContent = String(unk);
-      scope.querySelector(`#${sectionId}-empty-pill strong`).textContent= String(empty);
+  gEl.dataset.idxs = idxs.join(",");
+  host.appendChild(gEl);
+});
 
-      // Update global totals
-      const all = [...answers.s1, ...answers.s2];
-      let gYes=0,gNo=0,gUnk=0,gEmpty=0;
-      all.forEach(v=>{
-        if(v==='yes') gYes++;
-        else if(v==='no') gNo++;
-        else if(v==='unk') gUnk++;
-        else gEmpty++;
-      });
-      const totals = document.getElementById('totals');
-      totals.children[0].querySelector('strong').textContent = String(gYes);
-      totals.children[1].querySelector('strong').textContent = String(gNo);
-      totals.children[2].querySelector('strong').textContent = String(gUnk);
-      totals.children[3].querySelector('strong').textContent = String(gEmpty);
+// ---------- LOGIK ----------
+function update(){
+  document.querySelectorAll(".group").forEach(g=>{
+    const idxs = g.dataset.idxs.split(",").map(Number);
+    const done = idxs.every(i=>answers[i] && answers[i]===ANSWER_KEY[i]);
+    g.classList.toggle("complete", done);
+  });
 
-      updateGroupStates(sectionId);
-    }
-
-    function updateGroupStates(sectionId){
-      // Gennemløb alle grupper i sektionen, sæt klasse og badge hvis alle er besvaret
-      const gms = groupMeta[sectionId];
-      gms.forEach(g=>{
-        const answeredCount = g.indexes.reduce((n, idx)=> n + (answers[sectionId][idx] ? 1 : 0), 0);
-        const total = g.indexes.length;
-        const complete = answeredCount === total && total > 0;
-
-        g.el.classList.toggle('group-complete', complete);
-        g.progress.textContent = `${answeredCount}/${total} besvaret`;
-        g.badge.style.display = complete ? 'inline-flex' : 'none';
-      });
-    }
-
-    function handleClick(sectionId, index, value, questionEl){
-      // Toggle: klik på allerede-valgt svar rydder det
-      const current = answers[sectionId][index];
-      answers[sectionId][index] = current === value ? undefined : value;
-      setSelectionUI(questionEl, answers[sectionId][index]);
-      updateCounters(sectionId);
-    }
-
-    function iconFor(theme, idx){
-      const set = ICONS[theme] || ICONS.penge;
-      return set[idx % set.length];
-    }
-
-    function updateIconsForTheme(){
-      document.querySelectorAll('[data-icon-section]').forEach(el=>{
-        const idx = Number(el.getAttribute('data-icon-index')) || 0;
-        el.textContent = iconFor(currentTheme, idx);
-      });
-    }
-
-    // ---------------- Renderers ---------------------------------------------
-    function renderSection1() {
-      const host = document.getElementById('s1-groups');
-      let globalIdx = 0;
-      section1.groups.forEach((group, gIndex)=>{
-        const gEl = document.createElement('div');
-        gEl.className = 'group';
-
-        const head = document.createElement('div');
-        head.className = 'group-head';
-        const title = document.createElement('h3');
-        title.className='group-title';
-        title.innerHTML = group.title;
-
-        const badge = document.createElement('span');
-        badge.className = 'badge-complete';
-        badge.innerHTML = '✅ Afsluttet';
-
-        const progress = document.createElement('span');
-        progress.className = 'group-progress pill gray';
-        progress.textContent = '0/' + group.items.length + ' besvaret';
-
-        head.append(title, badge, progress);
-        gEl.appendChild(head);
-
-        const idxes = [];
-        group.items.forEach(text=>{
-          const idx = globalIdx++;
-          idxes.push(idx);
-
-          const q = document.createElement('div');
-          q.className = 'question';
-          q.dataset.section='s1';
-          q.dataset.index=String(idx);
-
-          const left = document.createElement('div');
-          left.className = 'q-left';
-
-          const badgeNum = document.createElement('div');
-          badgeNum.className='q-index';
-          badgeNum.textContent = String(idx+1);
-
-          const icon = document.createElement('div');
-          icon.className='q-icon';
-          icon.setAttribute('aria-hidden','true');
-          icon.setAttribute('data-icon-section','s1');
-          icon.setAttribute('data-icon-index', String(idx));
-          icon.textContent = iconFor(currentTheme, idx);
-
-          const p = document.createElement('div');
-          p.className='q-text';
-          p.innerHTML = text;
-
-          left.append(badgeNum, icon, p);
-
-          const actions = document.createElement('div');
-          actions.className='q-actions';
-
-          const status = document.createElement('span');
-          status.className='status';
-          status.textContent='Status: —';
-
-          const yes = createButton('Ja','btn-yes small',()=>handleClick('s1', idx, 'yes', q), 'Svar Ja');
-          yes.dataset.value='yes';
-          const no  = createButton('Nej','btn-no small',()=>handleClick('s1', idx, 'no', q), 'Svar Nej');
-          no.dataset.value='no';
-          const unk = createButton('Ved ikke','btn-unk small',()=>handleClick('s1', idx, 'unk', q), 'Svar Ved ikke');
-          unk.dataset.value='unk';
-
-          actions.append(yes,no,unk,status);
-          q.append(left, actions);
-          gEl.appendChild(q);
-        });
-
-        host.appendChild(gEl);
-
-        // Registrer gruppe-meta
-        groupMeta.s1.push({ el: gEl, indexes: idxes, progress, badge });
-      });
-
-      // init answers
-      answers.s1 = new Array(globalIdx).fill(undefined);
-      updateCounters('s1');
-    }
-
-    function renderSection2() {
-      const host = document.getElementById('s2-list');
-      const gEl = document.createElement('div');
-      gEl.className = 'group';
-
-      const head = document.createElement('div');
-      head.className = 'group-head';
-      const title = document.createElement('h3');
-      title.className='group-title';
-      title.textContent = 'Must-have tjek';
-      const badge = document.createElement('span');
-      badge.className = 'badge-complete';
-      badge.innerHTML = '✅ Afsluttet';
-      const progress = document.createElement('span');
-      progress.className = 'group-progress pill gray';
-      progress.textContent = `0/${section2.items.length} besvaret`;
-
-      head.append(title, badge, progress);
-      gEl.appendChild(head);
-
-      section2.items.forEach((text, i)=>{
-        const q = document.createElement('div');
-        q.className='question';
-        q.dataset.section='s2';
-        q.dataset.index=String(i);
-
-        const left = document.createElement('div');
-        left.className='q-left';
-
-        const badgeNum = document.createElement('div');
-        badgeNum.className='q-index';
-        badgeNum.textContent = String(i+1);
-
-        const icon = document.createElement('div');
-        icon.className='q-icon';
-        icon.setAttribute('aria-hidden','true');
-        icon.setAttribute('data-icon-section','s2');
-        icon.setAttribute('data-icon-index', String(i));
-        icon.textContent = iconFor(currentTheme, i);
-
-        const p = document.createElement('div');
-        p.className='q-text';
-        p.textContent = text;
-
-        left.append(badgeNum, icon, p);
-
-        const actions = document.createElement('div');
-        actions.className='q-actions';
-
-        const status = document.createElement('span');
-        status.className='status';
-        status.textContent='Status: —';
-
-        const yes = createButton('Ja','btn-yes small',()=>handleClick('s2', i, 'yes', q), 'Svar Ja');
-        yes.dataset.value='yes';
-        const no  = createButton('Nej','btn-no small',()=>handleClick('s2', i, 'no', q), 'Svar Nej');
-        no.dataset.value='no';
-        const unk = createButton('Ved ikke','btn-unk small',()=>handleClick('s2', i, 'unk', q), 'Svar Ved ikke');
-        unk.dataset.value='unk';
-
-        actions.append(yes,no,unk,status);
-        q.append(left,actions);
-        gEl.appendChild(q);
-      });
-
-      host.appendChild(gEl);
-
-      // init answers
-      answers.s2 = new Array(section2.items.length).fill(undefined);
-
-      // Registrer gruppe-meta (én gruppe i s2)
-      groupMeta.s2.push({ el: gEl, indexes: [...Array(section2.items.length).keys()], progress, badge });
-      updateCounters('s2');
-    }
-
-    function wireResets(){
-      document.querySelectorAll('.reset').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const sec = btn.dataset.reset;
-          answers[sec] = answers[sec].map(()=>undefined);
-          document.querySelectorAll(`[data-section="${sec}"]`).forEach(q=>{
-            setSelectionUI(q, undefined);
-          });
-          updateCounters(sec);
-        });
-      });
-    }
-
-    function wireThemeSelector(){
-      const sel = document.getElementById('theme');
-      sel.value = currentTheme;
-      sel.addEventListener('change', ()=>{
-        currentTheme = sel.value;
-        updateIconsForTheme();
-      });
-    }
-
-    // ---------------- Init ---------------------------------------------------
-    renderSection1();
-    renderSection2();
-    wireResets();
-    wireThemeSelector();
-  </script>
+  const allCorrect = answers.every((a,i)=>a && a===ANSWER_KEY[i]);
+  document.getElementById("final-banner").style.display =
+    allCorrect ? "block" : "none";
+}
+</script>
 </body>
 </html>
