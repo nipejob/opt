@@ -30,8 +30,10 @@
       --orange:#ef6c00;        /* gruppe-accent */
       --orange-200:#ffcc80;
 
-      --gray-300:#e5e7eb;      /* u- valgt/ub besvaret */
+      --gray-200:#f3f4f6;
+      --gray-300:#e5e7eb;
       --gray-500:#9ca3af;
+
       --radius:12px;
     }
 
@@ -51,24 +53,12 @@
       padding:24px; margin:18px 0 28px;
       border:1px solid var(--gray-300);
     }
-    .sec-head{
-      display:flex; flex-direction:column; gap:6px; margin-bottom:12px;
-    }
+    .sec-head{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
     .sec-title{
       margin:0; font-size:1.35rem; color:var(--blue);
       display:flex; align-items:center; gap:10px;
     }
-    .sec-sub{
-      margin:0; color:var(--muted); font-style:italic;
-    }
-
-    .group{
-      margin-top:18px; padding-top:14px; border-top:3px solid var(--orange-200);
-    }
-    .group-title{
-      margin:0 0 10px; font-weight:700; color:var(--orange);
-      font-size:1.05rem;
-    }
+    .sec-sub{ margin:0; color:var(--muted); font-style:italic; }
 
     .controls{
       display:flex; flex-wrap:wrap; align-items:center; gap:8px;
@@ -76,13 +66,14 @@
     }
     .pill{
       display:inline-flex; align-items:center; gap:6px;
-      padding:6px 10px; border-radius:999px; font-size:.9rem; font-weight:600;
-      color:#fff;
+      padding:6px 10px; border-radius:999px; font-size:.9rem; font-weight:600; color:#fff;
     }
     .pill.gray{ background:var(--gray-500) }
     .pill.green{ background:var(--green) }
     .pill.red{ background:var(--red) }
     .pill.yellow{ background:var(--yellow); color:var(--yellow-text) }
+    .pill.blue{ background:var(--blue) }
+    .pill.orange{ background:var(--orange) }
 
     .btn{
       border:none; border-radius:10px; padding:8px 12px; font-weight:700; color:#fff;
@@ -104,16 +95,50 @@
     .btn-unk:hover{ filter:brightness(1.05) }
     .btn-unk.selected{ outline:3px solid var(--yellow-200); box-shadow:0 0 0 3px rgba(249,168,37,.2) inset }
 
+    /* Afsnit / grupper */
+    .groups{ display:flex; flex-direction:column; gap:14px; }
+    .group{
+      padding:14px; border:2px solid var(--orange-200); border-radius:12px; background:#fff;
+      transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .group-head{
+      display:flex; align-items:center; gap:10px; margin:0 0 8px;
+    }
+    .group-title{
+      margin:0; font-weight:800; color:var(--orange); font-size:1.05rem; flex:1;
+    }
+    .group-progress{ margin-left:auto; }
+    .group-complete{
+      background: #eef8f0; /* grønt/lys når alt besvaret */
+      border-color: var(--green-200);
+      box-shadow: 0 0 0 3px rgba(46,125,50,.08) inset;
+    }
+    .group-complete .group-title{ color: var(--green-600); }
+    .group-complete .badge-complete{ display:inline-flex; }
+
+    .badge-complete{
+      display:none; align-items:center; gap:6px; padding:4px 8px;
+      border-radius:999px; font-weight:800; font-size:.82rem;
+      background:#d7f0dc; color:#155724; border:1px solid #a5d6a7;
+    }
+
     .question{
       display:grid; grid-template-columns: 1fr auto; gap:8px 12px;
       padding:12px 10px; margin:6px 0; border:1px solid var(--gray-300); border-radius:12px;
-      background:#fafafa;
+      background:#fafafa; transition: background-color .2s ease, border-color .2s ease;
     }
+    .question.answered{ background:#f3faf4; border-color:#cde9d0; }
+
     .q-left{ display:flex; gap:10px; align-items:flex-start }
     .q-index{
       flex:0 0 auto; min-width:28px; height:28px; border-radius:7px;
       background:var(--blue-200); color:#0f172a; font-weight:800;
       display:inline-flex; align-items:center; justify-content:center; font-size:.9rem;
+      margin-top:2px;
+    }
+    .q-icon{
+      width:28px; height:28px; border-radius:7px; display:inline-flex; align-items:center; justify-content:center;
+      background: #fff; border:1px solid var(--gray-300); font-size:1rem; user-select:none;
       margin-top:2px;
     }
     .q-text{ margin:0; }
@@ -126,26 +151,14 @@
     .counters{
       display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;
     }
-
-    .foot-total{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      margin-top:8px; padding:12px 10px; border-radius:10px; background:#f7f7f9;
-      border:1px solid var(--gray-300);
-    }
-    .note{
-      background:#fffbe6; border:1px solid #ffe58f; color:#7c6f00;
-      padding:10px 12px; border-radius:10px; margin-top:12px; font-size:.95rem;
-    }
     .hr{
       height:3px; background:linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
       border-radius:3px; margin:12px 0 6px;
     }
-
     .blockquote{
       border-left:5px solid var(--blue); padding:10px 14px; background:#f6fbff; border-radius:0 10px 10px 0;
       margin:12px 0 0; color:#0f172a; font-weight:600;
     }
-
     .topbar{
       display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px;
     }
@@ -155,6 +168,14 @@
     }
     .reset:hover{ filter:brightness(0.98) }
 
+    .toolbar{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:8px 0 0;
+    }
+    .select{
+      appearance:none; -webkit-appearance:none; -moz-appearance:none;
+      background:#fff; border:1px solid var(--gray-300); padding:6px 10px; border-radius:10px; font-weight:600;
+    }
+
     @media (max-width:680px){
       .question{ grid-template-columns: 1fr }
       .q-actions{ justify-content:flex-start }
@@ -163,6 +184,20 @@
 </head>
 <body>
   <div class="container">
+    <!-- Global top tools -->
+    <div class="section" style="padding:16px">
+      <div class="topbar" style="margin-bottom:0">
+        <h2 class="sec-title" style="font-size:1.1rem">Visuelle indstillinger</h2>
+        <div class="toolbar">
+          <label for="theme" class="pill blue" style="cursor:default">Tema</label>
+          <select id="theme" class="select" aria-label="Vælg ikon-tema">
+            <option value="penge">💰 Penge</option>
+            <option value="frugt">🍎 Frugter</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <!-- Sektion 1 -->
     <section class="section" id="section-1">
       <div class="topbar">
@@ -182,7 +217,7 @@
 
       <div class="hr"></div>
 
-      <div id="s1-groups"></div>
+      <div id="s1-groups" class="groups"></div>
 
       <div class="blockquote">
         Tommelregel: Hvis ét centralt punkt giver tvivl → <strong>ingen handel i dag</strong>.
@@ -206,17 +241,15 @@
       </div>
 
       <div class="hr"></div>
-      <div id="s2-list"></div>
+      <div id="s2-list" class="groups"></div>
 
-      <div class="note">
-        Tip: Du kan bruge sektionen ovenfor til den fulde kvalitetskontrol — og denne som hurtig "go/no-go".
-      </div>
+      <div class="pill orange" style="margin-top:10px">Tip: Brug denne som hurtig “go/no-go”.</div>
     </section>
 
-    <!-- Samlet tælling for hele siden -->
+    <!-- Samlet tælling -->
     <section class="section">
       <h3 class="sec-title" style="font-size:1.1rem">Samlet optælling</h3>
-      <div class="foot-total" id="totals">
+      <div class="controls" id="totals">
         <span class="pill green">Ja samlet: <strong>0</strong></span>
         <span class="pill red">Nej samlet: <strong>0</strong></span>
         <span class="pill yellow">Ved ikke samlet: <strong>0</strong></span>
@@ -226,7 +259,7 @@
   </div>
 
   <script>
-    // ---- Data --------------------------------------------------------------
+    // ---------------- Data ---------------------------------------------------
     const section1 = {
       id: 's1',
       groups: [
@@ -307,10 +340,21 @@
       ]
     };
 
-    // ---- State -------------------------------------------------------------
-    const answers = { s1: [], s2: [] }; // values: 'yes' | 'no' | 'unk' | undefined
+    // ---------------- Theme (ikoner) ---------------------------------------
+    const ICONS = {
+      penge: ['💰','📈','🪙','💹','🏦','💵','💳','📊','🧾','💼','📉','💸','🏛️','💱','🧮','🔍','🛡️','✅','📈','💰','💳','💹'],
+      frugt: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍒','🍍','🥝','🍑','🥭','🍈','🍏','🍎','🍇','🍓','🍍','🍊','🍒']
+    };
+    let currentTheme = 'penge';
 
-    // ---- Helpers -----------------------------------------------------------
+    // ---------------- State --------------------------------------------------
+    // values: 'yes' | 'no' | 'unk' | undefined
+    const answers = { s1: [], s2: [] };
+
+    // For at opmelde grupper (afsnit) i s1 og én gruppe i s2
+    const groupMeta = { s1: [], s2: [] }; // vil holde refs til DOM for grupper og deres spørgsmåls-indeks
+
+    // ---------------- Helpers -----------------------------------------------
     function createButton(label, cls, onClick, ariaLabel) {
       const b = document.createElement('button');
       b.type = 'button';
@@ -334,12 +378,16 @@
       const status = questionEl.querySelector('.status');
       if(!value){
         status.textContent = 'Status: —';
+        questionEl.classList.remove('answered');
       } else if(value==='yes'){
         status.textContent = 'Status: Ja';
+        questionEl.classList.add('answered');
       } else if(value==='no'){
         status.textContent = 'Status: Nej';
+        questionEl.classList.add('answered');
       } else {
         status.textContent = 'Status: Ved ikke';
+        questionEl.classList.add('answered');
       }
     }
 
@@ -373,30 +421,74 @@
       totals.children[1].querySelector('strong').textContent = String(gNo);
       totals.children[2].querySelector('strong').textContent = String(gUnk);
       totals.children[3].querySelector('strong').textContent = String(gEmpty);
+
+      updateGroupStates(sectionId);
+    }
+
+    function updateGroupStates(sectionId){
+      // Gennemløb alle grupper i sektionen, sæt klasse og badge hvis alle er besvaret
+      const gms = groupMeta[sectionId];
+      gms.forEach(g=>{
+        const answeredCount = g.indexes.reduce((n, idx)=> n + (answers[sectionId][idx] ? 1 : 0), 0);
+        const total = g.indexes.length;
+        const complete = answeredCount === total && total > 0;
+
+        g.el.classList.toggle('group-complete', complete);
+        g.progress.textContent = `${answeredCount}/${total} besvaret`;
+        g.badge.style.display = complete ? 'inline-flex' : 'none';
+      });
     }
 
     function handleClick(sectionId, index, value, questionEl){
-      // Toggle: click on already-selected clears it
+      // Toggle: klik på allerede-valgt svar rydder det
       const current = answers[sectionId][index];
       answers[sectionId][index] = current === value ? undefined : value;
       setSelectionUI(questionEl, answers[sectionId][index]);
       updateCounters(sectionId);
     }
 
-    // ---- Renderers ---------------------------------------------------------
+    function iconFor(theme, idx){
+      const set = ICONS[theme] || ICONS.penge;
+      return set[idx % set.length];
+    }
+
+    function updateIconsForTheme(){
+      document.querySelectorAll('[data-icon-section]').forEach(el=>{
+        const idx = Number(el.getAttribute('data-icon-index')) || 0;
+        el.textContent = iconFor(currentTheme, idx);
+      });
+    }
+
+    // ---------------- Renderers ---------------------------------------------
     function renderSection1() {
       const host = document.getElementById('s1-groups');
-      let counter = 0;
-      section1.groups.forEach(group=>{
+      let globalIdx = 0;
+      section1.groups.forEach((group, gIndex)=>{
         const gEl = document.createElement('div');
         gEl.className = 'group';
-        const h = document.createElement('h3');
-        h.className='group-title';
-        h.innerHTML = group.title;
-        gEl.appendChild(h);
 
+        const head = document.createElement('div');
+        head.className = 'group-head';
+        const title = document.createElement('h3');
+        title.className='group-title';
+        title.innerHTML = group.title;
+
+        const badge = document.createElement('span');
+        badge.className = 'badge-complete';
+        badge.innerHTML = '✅ Afsluttet';
+
+        const progress = document.createElement('span');
+        progress.className = 'group-progress pill gray';
+        progress.textContent = '0/' + group.items.length + ' besvaret';
+
+        head.append(title, badge, progress);
+        gEl.appendChild(head);
+
+        const idxes = [];
         group.items.forEach(text=>{
-          const idx = counter++;
+          const idx = globalIdx++;
+          idxes.push(idx);
+
           const q = document.createElement('div');
           q.className = 'question';
           q.dataset.section='s1';
@@ -404,14 +496,23 @@
 
           const left = document.createElement('div');
           left.className = 'q-left';
-          const badge = document.createElement('div');
-          badge.className='q-index';
-          badge.textContent = String(idx+1);
+
+          const badgeNum = document.createElement('div');
+          badgeNum.className='q-index';
+          badgeNum.textContent = String(idx+1);
+
+          const icon = document.createElement('div');
+          icon.className='q-icon';
+          icon.setAttribute('aria-hidden','true');
+          icon.setAttribute('data-icon-section','s1');
+          icon.setAttribute('data-icon-index', String(idx));
+          icon.textContent = iconFor(currentTheme, idx);
+
           const p = document.createElement('div');
           p.className='q-text';
           p.innerHTML = text;
-          left.appendChild(badge);
-          left.appendChild(p);
+
+          left.append(badgeNum, icon, p);
 
           const actions = document.createElement('div');
           actions.className='q-actions';
@@ -428,23 +529,40 @@
           unk.dataset.value='unk';
 
           actions.append(yes,no,unk,status);
-
           q.append(left, actions);
-          host.appendChild(q);
+          gEl.appendChild(q);
         });
 
         host.appendChild(gEl);
+
+        // Registrer gruppe-meta
+        groupMeta.s1.push({ el: gEl, indexes: idxes, progress, badge });
       });
 
       // init answers
-      answers.s1 = new Array(counter).fill(undefined);
+      answers.s1 = new Array(globalIdx).fill(undefined);
       updateCounters('s1');
     }
 
     function renderSection2() {
       const host = document.getElementById('s2-list');
-      const wrapper = document.createElement('div');
-      wrapper.className='group';
+      const gEl = document.createElement('div');
+      gEl.className = 'group';
+
+      const head = document.createElement('div');
+      head.className = 'group-head';
+      const title = document.createElement('h3');
+      title.className='group-title';
+      title.textContent = 'Must-have tjek';
+      const badge = document.createElement('span');
+      badge.className = 'badge-complete';
+      badge.innerHTML = '✅ Afsluttet';
+      const progress = document.createElement('span');
+      progress.className = 'group-progress pill gray';
+      progress.textContent = `0/${section2.items.length} besvaret`;
+
+      head.append(title, badge, progress);
+      gEl.appendChild(head);
 
       section2.items.forEach((text, i)=>{
         const q = document.createElement('div');
@@ -454,13 +572,23 @@
 
         const left = document.createElement('div');
         left.className='q-left';
-        const badge = document.createElement('div');
-        badge.className='q-index';
-        badge.textContent = String(i+1);
+
+        const badgeNum = document.createElement('div');
+        badgeNum.className='q-index';
+        badgeNum.textContent = String(i+1);
+
+        const icon = document.createElement('div');
+        icon.className='q-icon';
+        icon.setAttribute('aria-hidden','true');
+        icon.setAttribute('data-icon-section','s2');
+        icon.setAttribute('data-icon-index', String(i));
+        icon.textContent = iconFor(currentTheme, i);
+
         const p = document.createElement('div');
         p.className='q-text';
         p.textContent = text;
-        left.append(badge,p);
+
+        left.append(badgeNum, icon, p);
 
         const actions = document.createElement('div');
         actions.className='q-actions';
@@ -478,13 +606,16 @@
 
         actions.append(yes,no,unk,status);
         q.append(left,actions);
-        wrapper.appendChild(q);
+        gEl.appendChild(q);
       });
 
-      host.appendChild(wrapper);
+      host.appendChild(gEl);
 
       // init answers
       answers.s2 = new Array(section2.items.length).fill(undefined);
+
+      // Registrer gruppe-meta (én gruppe i s2)
+      groupMeta.s2.push({ el: gEl, indexes: [...Array(section2.items.length).keys()], progress, badge });
       updateCounters('s2');
     }
 
@@ -501,10 +632,20 @@
       });
     }
 
-    // ---- Init --------------------------------------------------------------
+    function wireThemeSelector(){
+      const sel = document.getElementById('theme');
+      sel.value = currentTheme;
+      sel.addEventListener('change', ()=>{
+        currentTheme = sel.value;
+        updateIconsForTheme();
+      });
+    }
+
+    // ---------------- Init ---------------------------------------------------
     renderSection1();
     renderSection2();
     wireResets();
+    wireThemeSelector();
   </script>
 </body>
 </html>
