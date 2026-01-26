@@ -3,135 +3,150 @@
 <html lang="da">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nikolaj – Aktie forberedelsesskema</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nikolaj – Aktie forberedelsesskema (mobilkompakt)</title>
 
 <style>
 :root{
-  --bg:#f0f1f3;
+  /* Farver */
+  --bg:#f2f3f5;
   --panel:#ffffff;
-  --green:#2e7d32;
-  --red:#e53935;
-  --yellow:#f9a825;
-  --blue:#1565c0;
-  --orange:#ef6c00;
-  --radius:14px;
+  --text:#1f2937;
+  --muted:#6b7280;
+
+  --green:#2e7d32;    /* Ja */
+  --red:#e53935;      /* Nej */
+  --yellow:#f9a825;   /* Ved ikke */
+  --blue:#1565c0;     /* Tjek */
+  --accent:#ef6c00;   /* Overskrift/accent */
+
+  /* Kompakt skala */
+  --radius:12px;
+  --pad:12px;
+  --gap:8px;
+  --font:15px;
+  --font-small:13px;
 }
 
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
 body{
   margin:0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background:var(--bg);
+  color:var(--text);
+  font-size:var(--font);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .container{
-  max-width:1000px;
-  margin:30px auto;
-  padding:0 16px;
+  max-width:900px;
+  margin:18px auto 80px;
+  padding:0 12px;
 }
 
 .section{
-  background:#fff;
+  background:var(--panel);
   border-radius:var(--radius);
-  padding:24px;
-  margin-bottom:30px;
-  box-shadow:0 12px 30px rgba(0,0,0,.06);
+  padding:var(--pad);
+  margin-bottom:14px;
+  box-shadow:0 8px 18px rgba(0,0,0,.06);
 }
 
-.group{
-  border:2px solid #ffd7b5;
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:18px;
+h1,h2{ margin:0 0 6px; }
+.sub{ color:var(--muted); margin:0 0 6px; font-size:var(--font-small); }
+
+/* Topværktøjer (tema) */
+.tools{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+}
+.select{
+  appearance:none;
+  background:#fff;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  padding:6px 10px;
+  font-weight:600;
+  font-size:var(--font-small);
 }
 
-.group.complete{
-  background:#e8f5e9;
-  border-color:#a5d6a7;
-}
-
-.group-head{
-  font-weight:800;
-  color:var(--orange);
-  display:flex;
-  align-items:center;
-}
-
-.group.complete .group-head{color:var(--green)}
-
-.badge{
-  margin-left:auto;
-  padding:4px 10px;
-  border-radius:999px;
-  background:#d7f0dc;
-  font-size:.8rem;
-  display:none;
-}
-
-.group.complete .badge{display:inline-block}
-
+/* Spørgsmålsliste – kompakt */
 .question{
-  margin-top:10px;
-  padding:12px;
-  border-radius:12px;
   border:1px solid #e5e7eb;
+  border-radius:10px;
   background:#fafafa;
+  padding:10px;
+  margin-top:8px;
   display:grid;
-  grid-template-columns:1fr auto;
-  gap:10px;
+  grid-template-columns: 1fr auto;
+  gap:8px;
 }
+.question.correct{ border:2px solid var(--green); background:#e8f5e9; }
+.question.wrong{   border:2px solid var(--red);   background:#fdecea; }
 
-.question.correct{border:2px solid var(--green);background:#e8f5e9}
-.question.wrong{border:2px solid var(--red);background:#fdecea}
-
-.q-left{display:flex;gap:10px}
+.q-left{ display:flex; gap:8px; align-items:flex-start; }
 .q-num{
-  width:28px;height:28px;
-  background:#bbdefb;
-  border-radius:6px;
-  font-weight:800;
-  display:flex;align-items:center;justify-content:center;
+  width:26px; height:26px; border-radius:6px;
+  background:#bbdefb; color:#0f172a; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto; font-size:13px; margin-top:1px;
 }
 .q-icon{
-  width:28px;height:28px;
-  border-radius:6px;
-  border:1px solid #ddd;
-  display:flex;align-items:center;justify-content:center;
+  width:26px; height:26px; border-radius:6px;
+  background:#fff; border:1px solid #e5e7eb;
+  display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto; user-select:none; font-size:16px; margin-top:1px;
 }
+.q-text{ line-height:1.3; }
 
-.actions{display:flex;gap:6px;flex-wrap:wrap}
-
+/* Knapper – kompakt og finger-venlige */
+.actions{ display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
 .btn{
-  border:none;
-  border-radius:8px;
-  padding:6px 10px;
-  font-weight:700;
-  cursor:pointer;
+  border:none; border-radius:9px; padding:6px 10px;
+  font-weight:800; cursor:pointer; font-size:14px;
+  box-shadow:0 1px 6px rgba(0,0,0,.07);
+  min-height:34px;
 }
-.yes{background:var(--green);color:#fff}
-.no{background:var(--red);color:#fff}
-.unk{background:var(--yellow)}
-.check{background:var(--blue);color:#fff}
+.btn:active{ transform:translateY(1px); }
 
-#final-banner{
-  display:none;
-  margin-top:30px;
-}
-#final-banner div{
-  padding:28px;
-  border-radius:20px;
+.yes{ background:var(--green); color:#fff; }
+.no{  background:var(--red);   color:#fff; }
+.unk{ background:var(--yellow); color:#111; }
+.check{ background:var(--blue); color:#fff; }
+
+/* Endeligt banner */
+#final-banner{ display:none; margin-top:12px; }
+#final-banner .inner{
+  padding:16px;
+  border-radius:16px;
   background:linear-gradient(135deg,#2e7d32,#66bb6a);
-  color:white;
-  text-align:center;
-  font-size:1.6rem;
-  font-weight:900;
-  box-shadow:0 18px 40px rgba(0,0,0,.3);
+  color:#fff; text-align:center;
+  font-size:1.2rem; font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
 }
 
-input{
-  padding:8px;
-  border-radius:8px;
-  border:1px solid #ccc;
+/* PDF-panel kompakt */
+.form-row{
+  display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end;
+}
+.input{
+  padding:8px 10px; border-radius:10px; border:1px solid #d1d5db;
+  font-size:14px; min-width:160px;
+}
+label{ font-size:12px; color:#374151; font-weight:700; }
+
+/* iPhone-tilpasning */
+@media (max-width:480px){
+  :root{
+    --pad:10px;
+    --gap:6px;
+    --font:14px;
+    --font-small:12px;
+  }
+  .question{ grid-template-columns: 1fr; }
+  .actions{ justify-content:flex-start; }
+  .btn{ padding:6px 9px; font-size:13px; min-height:32px; }
+  .q-num,.q-icon{ width:24px; height:24px; font-size:14px; }
 }
 </style>
 </head>
@@ -139,46 +154,57 @@ input{
 <body>
 <div class="container">
 
-<h1>🧠 Aktie‑checkliste før køb</h1>
-<p><em>Nikolaj – Forberedelsesskema</em></p>
-
-<div id="groups"></div>
-
-<div class="section">
-<h2>📄 PDF‑eksport</h2>
-<div style="display:flex;gap:12px;flex-wrap:wrap">
-  <div>
-    <label><strong>Firma</strong></label><br>
-    <input id="pdf-firma" placeholder="Fx Novo Nordisk">
-  </div>
-  <div>
-    <label><strong>Ticker</strong></label><br>
-    <input id="pdf-ticker" placeholder="Fx NOVO">
-  </div>
-  <div>
-    <label><strong>Kurs</strong></label><br>
-    <input id="pdf-kurs" placeholder="Fx 945,50">
-  </div>
-  <button onclick="exportPDF()" class="btn check" style="align-self:flex-end">
-    ⬇ Download PDF
-  </button>
-</div>
-<p style="font-size:.9rem;color:#555">Dato indsættes automatisk.</p>
-</div>
-
-<div id="final-banner">
-  <div>
-    ✅ OKAY TIL KØB / SLAG
-    <div style="font-size:1rem;font-weight:500;margin-top:8px">
-      Alle 21 punkter er korrekt vurderet
+  <!-- Kontrolbar -->
+  <div class="section">
+    <h1>🧠 Aktie‑checkliste før køb</h1>
+    <p class="sub">Nikolaj – Forberedelsesskema (mobilkompakt)</p>
+    <div class="tools">
+      <label for="theme" class="sub" style="font-weight:800">Ikon‑tema</label>
+      <select id="theme" class="select" aria-label="Vælg ikon-tema">
+        <option value="penge">💰 Penge</option>
+        <option value="frugt">🍎 Frugter</option>
+      </select>
+      <button id="resetAll" class="btn" style="background:#fff;border:1px solid #e5e7eb;color:#111;">Nulstil alle</button>
     </div>
   </div>
-</div>
+
+  <!-- Spørgsmål -->
+  <div id="questions" class="section"></div>
+
+  <!-- PDF-eksport -->
+  <div class="section">
+    <h2>📄 PDF‑eksport</h2>
+    <div class="form-row" style="margin-top:6px">
+      <div>
+        <label for="pdf-firma">Firma</label><br>
+        <input id="pdf-firma" class="input" placeholder="Fx Novo Nordisk">
+      </div>
+      <div>
+        <label for="pdf-kurs">Kurs</label><br>
+        <input id="pdf-kurs" class="input" placeholder="Fx 945,50">
+      </div>
+      <button id="btn-pdf" class="btn check">⬇ Download PDF</button>
+    </div>
+    <p class="sub" style="margin-top:6px">Dato indsættes automatisk. PDF’en indeholder alle spørgsmål, dine svar og endelig vurdering.</p>
+  </div>
+
+  <!-- OKAY-banner -->
+  <div id="final-banner" class="section">
+    <div class="inner">
+      ✅ OKAY TIL KØB / SLAG
+      <div style="font-size:.95rem;font-weight:600;margin-top:6px">
+        Alle 21 punkter er korrekt vurderet
+      </div>
+    </div>
+  </div>
 
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- jsPDF til PDF-eksport -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-Na8B1T0oz3oGLp8e3dQwhb34bG1z1AlmOvqN6YV9J7mX1y9vXYlYcJjvQO6xD9rY0k9sOfpVv+v8HkCzXW4F3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
+/* -------- Data -------- */
 const QUESTIONS = [
  "Handler jeg ud fra min strategi – og ikke mit humør?",
  "Er det ikke fredag, eller har jeg en meget god grund?",
@@ -191,13 +217,13 @@ const QUESTIONS = [
  "Er aktien handlet i EUR?",
  "Er den handlet i DKK, SEK eller NOK?",
  "Er det en A- eller B-aktie, og har jeg taget højde for forskellen?",
- "Passer positionens størrelse til min portefølje?",
- "Har jeg allerede for høj eksponering mod samme sektor?",
- "Er likviditeten høj nok til, at jeg kan komme ud?",
+ "Passer positionens størrelse til min portefølje",
+ "Har jeg allerede for høj eksponering mod samme sektor eller tema?",
+ "Er likviditeten høj nok til, at jeg kan komme ud uden problemer?",
  "Hvad er mit konkrete exit-scenarie, hvis jeg tager fejl?",
- "Er der en kommende begivenhed, jeg gambler på?",
+ "Er der en kommende begivenhed, jeg reelt gambler på (regnskab, rente, dom, FDA, guidance)?",
  "Hvad er det værste realistiske scenarie – og kan jeg leve med det?",
- "Er casen stadig gyldig ved 5–10 % market drawdown?",
+ "Er casen stadig gyldig, hvis markedet falder 5–10 %?",
  "Køber jeg pga. andres overbevisning – eller min egen analyse?",
  "Hvis jeg ikke ejede aktien i dag – ville jeg så købe den nu?",
  "Er alle oplysninger korrekt udfyldt og dobbelttjekket?"
@@ -210,73 +236,157 @@ const ANSWER_KEY = [
  'no','yes','yes','yes','yes','yes'
 ];
 
-const answers = [];
-const host = document.getElementById("groups");
+/* Ikon-temaer */
+const ICONS = {
+  penge: ['💰','📈','🪙','💹','🏦','💵','💳','📊','🧾','💼','📉','💸','🏛️','💱','🧮','🔍','🛡️','✅','📈','💰','💳','💹','💵','🏦'],
+  frugt: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍒','🍍','🥝','🍑','🥭','🍈','🍏','🍎','🍇','🍓','🍍','🍊','🍒','🍋','🍐']
+};
+let currentTheme = 'penge';
 
-QUESTIONS.forEach((q,i)=>{
-  answers[i]=null;
-  const el = document.createElement("div");
-  el.className="question";
-  el.innerHTML = `
-    <div class="q-left">
-      <div class="q-num">${i+1}</div>
-      <div class="q-icon">💰</div>
-      <div>${q}</div>
-    </div>
-    <div class="actions">
-      <button class="btn yes">Ja</button>
-      <button class="btn no">Nej</button>
-      <button class="btn unk">Ved ikke</button>
-      <button class="btn check">Tjek</button>
-    </div>`;
-  const [bYes,bNo,bUnk,bCheck] = el.querySelectorAll("button");
-  bYes.onclick=()=>answers[i]='yes';
-  bNo.onclick =()=>answers[i]='no';
-  bUnk.onclick=()=>answers[i]='unk';
-  bCheck.onclick=()=>{
-    if(!answers[i]) return alert("Svar først");
-    el.classList.remove("correct","wrong");
-    el.classList.add(answers[i]===ANSWER_KEY[i]?"correct":"wrong");
-    updateFinal();
-  };
-  host.appendChild(el);
+/* State */
+const answers = new Array(QUESTIONS.length).fill(null);
+
+/* -------- Rendering -------- */
+const listHost = document.getElementById('questions');
+
+function iconFor(idx){
+  const set = ICONS[currentTheme] || ICONS.penge;
+  return set[idx % set.length];
+}
+
+function renderList(){
+  listHost.innerHTML = '';
+  QUESTIONS.forEach((text, i)=>{
+    const el = document.createElement('div');
+    el.className = 'question';
+    el.dataset.index = i;
+
+    el.innerHTML = `
+      <div class="q-left">
+        <div class="q-num">${i+1}</div>
+        <div class="q-icon" data-icon="${i}">${iconFor(i)}</div>
+        <div class="q-text">${text}</div>
+      </div>
+      <div class="actions">
+        <button class="btn yes"  aria-label="Svar ja">Ja</button>
+        <button class="btn no"   aria-label="Svar nej">Nej</button>
+        <button class="btn unk"  aria-label="Svar ved ikke">Ved ikke</button>
+        <button class="btn check" aria-label="Tjek svar">Tjek</button>
+      </div>
+    `;
+
+    const [bYes, bNo, bUnk, bCheck] = el.querySelectorAll('button');
+    bYes.onclick  = ()=>{ answers[i]='yes'; el.classList.remove('correct','wrong'); };
+    bNo.onclick   = ()=>{ answers[i]='no';  el.classList.remove('correct','wrong'); };
+    bUnk.onclick  = ()=>{ answers[i]='unk'; el.classList.remove('correct','wrong'); };
+
+    bCheck.onclick = ()=>{
+      if(!answers[i]) { alert('Svar først'); return; }
+      el.classList.remove('correct','wrong');
+      el.classList.add(answers[i]===ANSWER_KEY[i] ? 'correct' : 'wrong');
+      updateFinalBanner();
+    };
+
+    listHost.appendChild(el);
+  });
+}
+
+/* Tema-vælger */
+const themeSel = document.getElementById('theme');
+themeSel.addEventListener('change', ()=>{
+  currentTheme = themeSel.value;
+  document.querySelectorAll('[data-icon]').forEach(icon=>{
+    const idx = Number(icon.getAttribute('data-icon'));
+    icon.textContent = iconFor(idx);
+  });
 });
 
-function updateFinal(){
-  const ok = answers.every((a,i)=>a && a===ANSWER_KEY[i]);
-  document.getElementById("final-banner").style.display = ok?"block":"none";
+/* Nulstil */
+document.getElementById('resetAll').addEventListener('click', ()=>{
+  answers.fill(null);
+  document.querySelectorAll('.question').forEach(q=>{
+    q.classList.remove('correct','wrong');
+  });
+  document.getElementById('final-banner').style.display='none';
+});
+
+/* OKAY-banner */
+function updateFinalBanner(){
+  const ok = answers.every((a,i)=> a && a===ANSWER_KEY[i]);
+  document.getElementById('final-banner').style.display = ok ? 'block' : 'none';
 }
+
+/* -------- PDF-eksport -------- */
+document.getElementById('btn-pdf').addEventListener('click', exportPDF);
 
 function exportPDF(){
-  if(!answers.every((a,i)=>a && a===ANSWER_KEY[i]))
-    return alert("Checklist skal være godkendt.");
+  // Kræv godkendt checklist
+  const ok = answers.every((a,i)=> a && a===ANSWER_KEY[i]);
+  if(!ok){ alert('Checklist skal være fuldt godkendt (alle korrekt) før eksport.'); return; }
 
-  const firma=document.getElementById("pdf-firma").value;
-  const kurs=document.getElementById("pdf-kurs").value;
-  const ticker=document.getElementById("pdf-ticker").value;
+  const firma = document.getElementById('pdf-firma').value.trim();
+  const kurs  = document.getElementById('pdf-kurs').value.trim();
+  if(!firma || !kurs){ alert('Udfyld både Firma og Kurs.'); return; }
 
-  if(!firma||!kurs||!ticker) return alert("Udfyld firma, ticker og kurs.");
+  const isoDate = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const daDate  = new Date().toLocaleDateString('da-DK');
 
-  const dato = new Date().toISOString().slice(0,10);
-  const {jsPDF}=window.jspdf;
-  const doc=new jsPDF();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
 
-  let y=14;
-  doc.setFontSize(16);
-  doc.text("Aktie – Forberedelsesskema",14,y);
-  y+=10;
-  doc.setFontSize(11);
-  doc.text(`Firma: ${firma}`,14,y); y+=6;
-  doc.text(`Ticker: ${ticker}`,14,y); y+=6;
-  doc.text(`Kurs: ${kurs}`,14,y); y+=6;
-  doc.text(`Dato: ${dato}`,14,y);
+  const margin = 14;
+  let y = margin;
 
-  y+=10;
-  doc.text("✅ OKAY TIL KØB / SLAG",14,y);
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text('Aktie – Forberedelsesskema', margin, y);
+  y += 8;
 
-  const filename = `${dato}_${ticker}_Forberedelsesskema.pdf`;
+  doc.setFont('helvetica','normal'); doc.setFontSize(11);
+  doc.text(`Firma: ${firma}`, margin, y); y += 6;
+  doc.text(`Kurs: ${kurs}`, margin, y);  y += 6;
+  doc.text(`Dato: ${daDate}`, margin, y); y += 8;
+
+  doc.setFont('helvetica','bold'); doc.text('Resultat:', margin, y); y += 6;
+  doc.setFont('helvetica','normal');
+  doc.text('✅ OKAY TIL KØB / SLAG', margin, y); y += 8;
+
+  doc.setFont('helvetica','bold'); doc.text('Checkliste:', margin, y); y += 6;
+  doc.setFont('helvetica','normal');
+
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  for(let i=0;i<QUESTIONS.length;i++){
+    const qNum = `${i+1}. `;
+    const qTxt = QUESTIONS[i];
+    const aLbl = answers[i]==='yes' ? 'Ja' : answers[i]==='no' ? 'Nej' : 'Ved ikke';
+    const correct = answers[i]===ANSWER_KEY[i];
+    const mark = correct ? '✅' : '❌';
+
+    // Wrap spørgsmål
+    const maxWidth = doc.internal.pageSize.getWidth() - margin*2;
+    const linesQ = doc.splitTextToSize(qNum + qTxt, maxWidth);
+    const linesA = [`Svar: ${aLbl}  ${mark}`];
+
+    const blockHeight = linesQ.length*5 + linesA.length*5 + 4;
+
+    if(y + blockHeight > pageHeight - margin){
+      doc.addPage();
+      y = margin;
+    }
+
+    doc.text(linesQ, margin, y); y += linesQ.length*5;
+    doc.text(linesA, margin, y); y += linesA.length*5 + 4;
+  }
+
+  const safeName = firma.replace(/[^A-Za-z0-9_-]+/g,'_').replace(/_+/g,'_');
+  const filename = `${isoDate}_${safeName}_Forberedelsesskema.pdf`;
   doc.save(filename);
 }
+
+/* Init */
+renderList();
+updateFinalBanner();
 </script>
 </body>
 </html>
+``
