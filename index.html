@@ -1,10 +1,9 @@
-
 <!doctype html>
 <html lang="da">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Nikolaj – Aktie forberedelsesskema (med kategorier)</title>
+<title>Komplet Trading Checkliste – Nikolaj</title>
 
 <style>
 :root{
@@ -18,6 +17,7 @@
   --yellow:#f9a825;   /* Ved ikke */
   --blue:#1565c0;     /* Tjek */
   --accent:#ef6c00;   /* Overskrift/accent */
+  --amber:#f57c00;    /* Trader egenskaber */
 
   --radius:12px;
   --pad:12px;
@@ -89,6 +89,19 @@ h1,h2{ margin:0 0 6px; }
 }
 .group.complete .badge{ display:inline-block; }
 
+/* Trader egenskaber specielle farver */
+.trader-group{
+  border-color:#ffcc80;
+}
+.trader-group .group-head{
+  color:var(--amber);
+}
+.trader-group.complete{
+  background:#fff3e0; border-color:#ffb74d;
+}
+.trader-group.complete .group-head{ color:var(--amber); }
+.trader-group.complete .badge{ background:#ffe0b2; }
+
 /* Spørgsmål – kompakt */
 .question{
   border:1px solid #e5e7eb;
@@ -133,6 +146,53 @@ h1,h2{ margin:0 0 6px; }
 .unk{ background:var(--yellow); color:#111; }
 .check{ background:var(--blue); color:#fff; }
 
+/* Kollaps funktionalitet */
+.collapse-toggle{
+  background:transparent;
+  border:1px solid #d1d5db;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:8px;
+  width:100%;
+  justify-content:space-between;
+}
+.collapse-toggle:hover{ background:#f9fafb; }
+.collapse-content{ display:block; }
+.collapse-content.collapsed{ display:none; }
+.collapse-arrow{ 
+  transition: transform 0.2s;
+  font-size:14px;
+}
+.collapsed + .collapse-toggle .collapse-arrow{ transform:rotate(-90deg); }
+
+/* Info-boks */
+.info-box{
+  background:#e3f2fd;
+  border:2px solid #90caf9;
+  border-radius:12px;
+  padding:12px;
+  margin-top:10px;
+}
+.info-box h3{
+  margin:0 0 8px;
+  color:#1565c0;
+  font-size:16px;
+}
+.info-box ul{
+  margin:0;
+  padding-left:20px;
+}
+.info-box li{
+  margin:4px 0;
+  line-height:1.4;
+}
+
 /* Endeligt banner */
 #final-banner{ display:none; margin-top:12px; }
 #final-banner .inner{
@@ -141,6 +201,16 @@ h1,h2{ margin:0 0 6px; }
   background:linear-gradient(135deg,#2e7d32,#66bb6a);
   color:#fff; text-align:center;
   font-size:1.2rem; font-weight:900;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+}
+
+#trader-warning{ display:none; margin-top:12px; }
+#trader-warning .inner{
+  padding:16px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#f57c00,#ffb74d);
+  color:#fff; text-align:center;
+  font-size:1.1rem; font-weight:900;
   box-shadow:0 12px 28px rgba(0,0,0,.25);
 }
 
@@ -153,6 +223,20 @@ h1,h2{ margin:0 0 6px; }
   font-size:14px; min-width:160px;
 }
 label{ font-size:12px; color:#374151; font-weight:700; }
+
+/* Progress */
+.progress-bar{
+  background:#e5e7eb;
+  height:8px;
+  border-radius:999px;
+  overflow:hidden;
+  margin:10px 0;
+}
+.progress-fill{
+  background:linear-gradient(90deg, var(--amber), var(--green));
+  height:100%;
+  transition: width 0.3s;
+}
 
 /* iPhone-tilpasning */
 @media (max-width:480px){
@@ -174,8 +258,8 @@ label{ font-size:12px; color:#374151; font-weight:700; }
 
   <!-- Topbar -->
   <div class="section">
-    <h1>🧠 Aktie‑checkliste før køb</h1>
-    <p class="sub">Nikolaj – Forberedelsesskema (med kategorier)</p>
+    <h1>🧠 Komplet Trading Checkliste</h1>
+    <p class="sub">Nikolaj – Trader Egenskaber + Aktie Forberedelsesskema</p>
     <div class="tools">
       <label for="theme" class="sub" style="font-weight:800">Ikon‑tema</label>
       <select id="theme" class="select" aria-label="Vælg ikon-tema">
@@ -184,10 +268,68 @@ label{ font-size:12px; color:#374151; font-weight:700; }
       </select>
       <button id="resetAll" class="btn" style="background:#fff;border:1px solid #e5e7eb;color:#111;">Nulstil alle</button>
     </div>
+    
+    <!-- Progress -->
+    <div style="margin-top:12px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:4px">
+        <span>Fremskridt</span>
+        <span id="progress-text">0 / 36</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- Liste med kategorier og spørgsmål -->
-  <div id="groups" class="section"></div>
+  <!-- DEL 1: TRADER EGENSKABER -->
+  <div class="section">
+    <button class="collapse-toggle" id="trader-toggle">
+      <span style="font-size:18px">🧘 Del 1: Trader Egenskaber (15 punkter – valgfri)</span>
+      <span class="collapse-arrow">▼</span>
+    </button>
+    
+    <div id="trader-content" class="collapse-content">
+      <p class="sub">Evaluer din mentale tilstand før du analyserer aktien. Disse egenskaber er fundamentet for langsigtet succes.</p>
+      
+      <div id="trader-groups"></div>
+
+      <!-- Info-boks: Det du IKKE behøver -->
+      <div class="info-box">
+        <h3>💡 Bonus: Det Du IKKE Behøver</h3>
+        <p style="margin:0 0 8px;font-size:14px">Interessant nok behøver du IKKE:</p>
+        <ul style="font-size:14px">
+          <li>At være matematisk geni</li>
+          <li>At handle konstant</li>
+          <li>At følge 47 forskellige indikatorer</li>
+          <li>At forudsige hver bevægelse korrekt</li>
+          <li>At slå markedet hver dag</li>
+        </ul>
+      </div>
+
+      <!-- Trader warning -->
+      <div id="trader-warning">
+        <div class="inner">
+          ⚠️ DU ER IKKE I OPTIMAL TRADING-TILSTAND
+          <div style="font-size:.9rem;font-weight:600;margin-top:6px">
+            Overvej at vente med at trade indtil du er mere klar
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEL 2: AKTIE ANALYSE -->
+  <div class="section">
+    <button class="collapse-toggle" id="aktie-toggle">
+      <span style="font-size:18px">📊 Del 2: Aktie-analyse før køb (21 punkter)</span>
+      <span class="collapse-arrow">▼</span>
+    </button>
+    
+    <div id="aktie-content" class="collapse-content">
+      <p class="sub">Teknisk analyse af den specifikke aktie du overvejer.</p>
+      <div id="aktie-groups"></div>
+    </div>
+  </div>
 
   <!-- PDF-eksport -->
   <div class="section">
@@ -203,15 +345,15 @@ label{ font-size:12px; color:#374151; font-weight:700; }
       </div>
       <button id="btn-pdf" class="btn check">⬇ Download PDF</button>
     </div>
-    <p class="sub" style="margin-top:6px">Dato indsættes automatisk. PDF’en indeholder kategorier, alle spørgsmål, dine svar og endelig vurdering.</p>
+    <p class="sub" style="margin-top:6px">Dato indsættes automatisk. PDF'en indeholder begge dele, alle spørgsmål, dine svar og endelig vurdering.</p>
   </div>
 
-  <!-- OKAY-banner -->
+  <!-- OKAY-banner (kun hvis AKTIE-delen er godkendt) -->
   <div id="final-banner" class="section">
     <div class="inner">
       ✅ OKAY TIL KØB / SLAG
       <div style="font-size:.95rem;font-weight:600;margin-top:6px">
-        Alle 21 punkter er korrekt vurderet
+        Aktie-analysen er godkendt (21 punkter korrekt)
       </div>
     </div>
   </div>
@@ -222,8 +364,47 @@ label{ font-size:12px; color:#374151; font-weight:700; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-YkY0QmHn+e0Q2b9f0H6oQ9r1u0b8rQ1n54tZpYJYgJXzO4Q6GmW3S9+0zv0l0o1f4Qx0Hc3p3y3M6aJkUq4w0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
-/* ====== Data (kategorier + spørgsmål) ====== */
-const GROUPS = [
+/* ====== TRADER EGENSKABER DATA ====== */
+const TRADER_GROUPS = [
+  {
+    title: "Psykologiske Evner",
+    items: [
+      "Ydmyghed: Jeg accepterer at jeg ikke kan forudsige fremtiden, og at selv de bedste tager fejl 40-50% af tiden",
+      "Tålmodighed: Jeg kan vente på de rigtige opsætninger og handler ikke bare for at handle",
+      "Disciplin: Jeg følger min plan, sætter stop-loss og respekterer dem ALTID",
+      "Emotionel kontrol: Jeg håndterer grådighed og panik, og lader ikke FOMO diktere mine beslutninger",
+      "Selvbevidsthed: Jeg kender mine psykologiske triggere og forstår mine egne bias",
+      "Accepten af tab: Jeg ser tab som omkostninger ved forretning, ikke personlige fiaskoer",
+      "Mod til at handle anderledes: Jeg kan gå mod flokken når min analyse siger det (men ikke bare for at være kontrarisk)"
+    ]
+  },
+  {
+    title: "Analytiske Evner",
+    items: [
+      "Pattern recognition: Jeg kan genkende støtte, modstand, trends og skelne mellem ægte/falske breakouts",
+      "Kritisk tænkning: Jeg stiller spørgsmålstegn ved alt (også mine egne antagelser) og følger ikke blindt 'eksperter'",
+      "Sandsynlighedstænkning: Jeg tænker i odds og percentiler, ikke sikkerhed. Jeg forstår at proces > outcome",
+      "Systemisk forståelse: Jeg ser sammenhænge mellem volatility, støtte/modstand, trends og momentum"
+    ]
+  },
+  {
+    title: "Teknisk Viden",
+    items: [
+      "Markedsmekanik: Jeg forstår støtte/modstand, trends, breakouts, volume-analyse og markedsfaser",
+      "Risikostyring: Jeg kan beregne position-størrelse, sætte stop-loss, diversificere (max 1-2% risiko per trade)",
+      "Markedspsykologi: Jeg forstår loss aversion, herd mentality, FOMO, confirmation bias"
+    ]
+  },
+  {
+    title: "Strategiske Evner",
+    items: [
+      "Langsigtet perspektiv: Jeg kan zoome ud, tænke i år/årtier (ikke dage), og forstår kraften i compounding"
+    ]
+  }
+];
+
+/* ====== AKTIE-ANALYSE DATA ====== */
+const AKTIE_GROUPS = [
   {
     title: "Strategi & timing",
     items: [
@@ -282,36 +463,100 @@ const GROUPS = [
   }
 ];
 
-/* Facit (dine korrekte svar) – 21 stk i rækkefølge 1..21 */
-const ANSWER_KEY = [
+/* Facit for AKTIE (21 stk) */
+const AKTIE_ANSWER_KEY = [
  'yes','yes','yes','unk','no',
  'yes','yes','yes','no','yes',
  'yes','yes','no','yes','unk',
  'no','yes','yes','yes','yes','yes'
 ];
 
+/* Facit for TRADER (15 stk) - alle skal være 'yes' */
+const TRADER_ANSWER_KEY = new Array(15).fill('yes');
+
 /* Ikon-temaer */
 const ICONS = {
-  penge: ['💰','📈','🪙','💹','🏦','💵','💳','📊','🧾','💼','📉','💸','🏛️','💱','🧮','🔍','🛡️','✅','📈','💰','💳','💹','💵','🏦'],
-  frugt: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍒','🍍','🥝','🍑','🥭','🍈','🍏','🍎','🍇','🍓','🍍','🍊','🍒','🍋','🍐']
+  penge: ['💰','📈','🪙','💹','🏦','💵','💳','📊','🧾','💼','📉','💸','🏛️','💱','🧮','🔍','🛡️','✅','📈','💰','💳','💹','💵','🏦','🎯','💎','🔑','🧠','⚡','🎲','📐','🔬','🎓','🌟','🚀'],
+  frugt: ['🍎','🍐','🍊','🍋','🍌','🍉','🍇','🍓','🫐','🍒','🍍','🥝','🍑','🥭','🍈','🍏','🍎','🍇','🍓','🍍','🍊','🍒','🍋','🍐','🥥','🍅','🫑','🥕','🌽','🥦','🥒','🌶️','🥑','🍆','🥬']
 };
 let currentTheme = 'penge';
 
 /* State */
-const answers = new Array(ANSWER_KEY.length).fill(null);
+const traderAnswers = new Array(15).fill(null);
+const aktieAnswers = new Array(21).fill(null);
 
 /* ====== Rendering ====== */
-const groupsHost = document.getElementById('groups');
-
 function iconFor(idx){
   const set = ICONS[currentTheme] || ICONS.penge;
   return set[idx % set.length];
 }
 
-function renderAll(){
-  groupsHost.innerHTML = '';
+function renderTrader(){
+  const host = document.getElementById('trader-groups');
+  host.innerHTML = '';
   let qIdx = 0;
-  GROUPS.forEach((g,gIndex)=>{
+  
+  TRADER_GROUPS.forEach((g,gIndex)=>{
+    const gEl = document.createElement('div');
+    gEl.className = 'group trader-group';
+    const head = document.createElement('div');
+    head.className = 'group-head';
+    const title = document.createElement('div');
+    title.textContent = g.title;
+    const badge = document.createElement('div');
+    badge.className = 'badge';
+    badge.textContent = '✅ Afsluttet';
+    head.append(title, badge);
+    gEl.appendChild(head);
+
+    const idxs = [];
+
+    g.items.forEach((text)=>{
+      const i = qIdx++;
+      idxs.push(i);
+
+      const q = document.createElement('div');
+      q.className = 'question';
+      q.dataset.index = i;
+      q.dataset.section = 'trader';
+
+      q.innerHTML = `
+        <div class="q-left">
+          <div class="q-num">T${i+1}</div>
+          <div class="q-icon" data-icon="${i}">${iconFor(i)}</div>
+          <div class="q-text">${text}</div>
+        </div>
+        <div class="actions">
+          <button class="btn yes"  aria-label="Svar ja">Ja</button>
+          <button class="btn no"   aria-label="Svar nej">Nej</button>
+          <button class="btn check" aria-label="Tjek svar">Tjek</button>
+        </div>
+      `;
+
+      const [bYes,bNo,bCheck] = q.querySelectorAll('button');
+      bYes.onclick  = ()=>{ traderAnswers[i]='yes'; q.classList.remove('correct','wrong'); updateAll(); };
+      bNo.onclick   = ()=>{ traderAnswers[i]='no';  q.classList.remove('correct','wrong'); updateAll(); };
+      bCheck.onclick = ()=>{
+        if(!traderAnswers[i]){ alert('Svar først'); return; }
+        q.classList.remove('correct','wrong');
+        q.classList.add(traderAnswers[i]===TRADER_ANSWER_KEY[i] ? 'correct' : 'wrong');
+        updateAll();
+      };
+
+      gEl.appendChild(q);
+    });
+
+    gEl.dataset.indexes = idxs.join(',');
+    host.appendChild(gEl);
+  });
+}
+
+function renderAktie(){
+  const host = document.getElementById('aktie-groups');
+  host.innerHTML = '';
+  let qIdx = 0;
+  
+  AKTIE_GROUPS.forEach((g,gIndex)=>{
     const gEl = document.createElement('div');
     gEl.className = 'group';
     const head = document.createElement('div');
@@ -333,11 +578,12 @@ function renderAll(){
       const q = document.createElement('div');
       q.className = 'question';
       q.dataset.index = i;
+      q.dataset.section = 'aktie';
 
       q.innerHTML = `
         <div class="q-left">
-          <div class="q-num">${i+1}</div>
-          <div class="q-icon" data-icon="${i}">${iconFor(i)}</div>
+          <div class="q-num">A${i+1}</div>
+          <div class="q-icon" data-icon="${15+i}">${iconFor(15+i)}</div>
           <div class="q-text">${text}</div>
         </div>
         <div class="actions">
@@ -349,22 +595,21 @@ function renderAll(){
       `;
 
       const [bYes,bNo,bUnk,bCheck] = q.querySelectorAll('button');
-      bYes.onclick  = ()=>{ answers[i]='yes'; q.classList.remove('correct','wrong'); updateGroupStates(); };
-      bNo.onclick   = ()=>{ answers[i]='no';  q.classList.remove('correct','wrong'); updateGroupStates(); };
-      bUnk.onclick  = ()=>{ answers[i]='unk'; q.classList.remove('correct','wrong'); updateGroupStates(); };
+      bYes.onclick  = ()=>{ aktieAnswers[i]='yes'; q.classList.remove('correct','wrong'); updateAll(); };
+      bNo.onclick   = ()=>{ aktieAnswers[i]='no';  q.classList.remove('correct','wrong'); updateAll(); };
+      bUnk.onclick  = ()=>{ aktieAnswers[i]='unk'; q.classList.remove('correct','wrong'); updateAll(); };
       bCheck.onclick = ()=>{
-        if(!answers[i]){ alert('Svar først'); return; }
+        if(!aktieAnswers[i]){ alert('Svar først'); return; }
         q.classList.remove('correct','wrong');
-        q.classList.add(answers[i]===ANSWER_KEY[i] ? 'correct' : 'wrong');
-        updateGroupStates();
-        updateFinalBanner();
+        q.classList.add(aktieAnswers[i]===AKTIE_ANSWER_KEY[i] ? 'correct' : 'wrong');
+        updateAll();
       };
 
       gEl.appendChild(q);
     });
 
     gEl.dataset.indexes = idxs.join(',');
-    groupsHost.appendChild(gEl);
+    host.appendChild(gEl);
   });
 }
 
@@ -380,78 +625,186 @@ themeSel.addEventListener('change', ()=>{
 
 /* Nulstil alt */
 document.getElementById('resetAll').addEventListener('click', ()=>{
-  answers.fill(null);
+  traderAnswers.fill(null);
+  aktieAnswers.fill(null);
   document.querySelectorAll('.question').forEach(q=>{
     q.classList.remove('correct','wrong');
   });
-  document.getElementById('final-banner').style.display='none';
-  updateGroupStates();
+  updateAll();
 });
 
-/* Gruppe-fuldførelse (grøn når alle dens spørgsmål er korrekte) */
+/* Kollaps funktionalitet */
+document.getElementById('trader-toggle').addEventListener('click', ()=>{
+  const content = document.getElementById('trader-content');
+  content.classList.toggle('collapsed');
+});
+
+document.getElementById('aktie-toggle').addEventListener('click', ()=>{
+  const content = document.getElementById('aktie-content');
+  content.classList.toggle('collapsed');
+});
+
+/* Gruppe-fuldførelse */
 function updateGroupStates(){
-  document.querySelectorAll('.group').forEach(g=>{
+  // Trader groups
+  document.querySelectorAll('.trader-group').forEach(g=>{
     const idxs = (g.dataset.indexes||'').split(',').filter(Boolean).map(Number);
-    const complete = idxs.length>0 && idxs.every(i => answers[i] && answers[i]===ANSWER_KEY[i]);
+    const complete = idxs.length>0 && idxs.every(i => traderAnswers[i] && traderAnswers[i]===TRADER_ANSWER_KEY[i]);
+    g.classList.toggle('complete', complete);
+  });
+  
+  // Aktie groups
+  document.querySelectorAll('.group:not(.trader-group)').forEach(g=>{
+    const idxs = (g.dataset.indexes||'').split(',').filter(Boolean).map(Number);
+    const complete = idxs.length>0 && idxs.every(i => aktieAnswers[i] && aktieAnswers[i]===AKTIE_ANSWER_KEY[i]);
     g.classList.toggle('complete', complete);
   });
 }
 
-/* OKAY-banner (kun hvis ALT er korrekt) */
+/* Trader warning */
+function updateTraderWarning(){
+  const allAnswered = traderAnswers.every(a => a !== null);
+  if(!allAnswered){
+    document.getElementById('trader-warning').style.display = 'none';
+    return;
+  }
+  
+  const allCorrect = traderAnswers.every((a,i) => a === TRADER_ANSWER_KEY[i]);
+  document.getElementById('trader-warning').style.display = allCorrect ? 'none' : 'block';
+}
+
+/* OKAY-banner (kun aktie-delen) */
 function updateFinalBanner(){
-  const ok = answers.every((a,i)=> a && a===ANSWER_KEY[i]);
+  const ok = aktieAnswers.every((a,i)=> a && a===AKTIE_ANSWER_KEY[i]);
   document.getElementById('final-banner').style.display = ok ? 'block' : 'none';
+}
+
+/* Progress bar */
+function updateProgress(){
+  const traderCorrect = traderAnswers.filter((a,i) => a && a===TRADER_ANSWER_KEY[i]).length;
+  const aktieCorrect = aktieAnswers.filter((a,i) => a && a===AKTIE_ANSWER_KEY[i]).length;
+  const total = traderCorrect + aktieCorrect;
+  const percent = (total / 36) * 100;
+  
+  document.getElementById('progress-text').textContent = `${total} / 36`;
+  document.getElementById('progress-fill').style.width = percent + '%';
+}
+
+function updateAll(){
+  updateGroupStates();
+  updateTraderWarning();
+  updateFinalBanner();
+  updateProgress();
 }
 
 /* ====== PDF-eksport ====== */
 document.getElementById('btn-pdf').addEventListener('click', exportPDF);
 
 function exportPDF(){
-  const ok = answers.every((a,i)=> a && a===ANSWER_KEY[i]);
-  if(!ok){ alert('Checklist skal være fuldt godkendt (alle korrekt) før eksport.'); return; }
+  const aktieOk = aktieAnswers.every((a,i)=> a && a===AKTIE_ANSWER_KEY[i]);
+  if(!aktieOk){ 
+    alert('Aktie-analysen skal være fuldt godkendt (alle 21 punkter korrekt) før eksport.'); 
+    return; 
+  }
 
   const firma = document.getElementById('pdf-firma').value.trim();
   const kurs  = document.getElementById('pdf-kurs').value.trim();
   if(!firma || !kurs){ alert('Udfyld både Firma og Kurs.'); return; }
 
-  const isoDate = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+  const isoDate = new Date().toISOString().slice(0,10);
   const daDate  = new Date().toLocaleDateString('da-DK');
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4' });
 
   const margin = 14;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const maxWidth = doc.internal.pageSize.getWidth() - margin*2;
   let y = margin;
 
+  // Header
   doc.setFont('helvetica','bold'); doc.setFontSize(16);
-  doc.text('Aktie – Forberedelsesskema', margin, y);
+  doc.text('Komplet Trading Checkliste', margin, y);
   y += 8;
 
   doc.setFont('helvetica','normal'); doc.setFontSize(11);
   doc.text(`Firma: ${firma}`, margin, y); y += 6;
   doc.text(`Kurs: ${kurs}`, margin, y);  y += 6;
-  doc.text(`Dato: ${daDate}`, margin, y); y += 8;
+  doc.text(`Dato: ${daDate}`, margin, y); y += 10;
 
-  doc.setFont('helvetica','bold'); doc.text('Resultat:', margin, y); y += 6;
-  doc.setFont('helvetica','normal');
+  // DEL 1: Trader Egenskaber
+  doc.setFont('helvetica','bold'); doc.setFontSize(14);
+  doc.text('DEL 1: TRADER EGENSKABER', margin, y); y += 8;
+
+  const traderAllAnswered = traderAnswers.every(a => a !== null);
+  if(traderAllAnswered){
+    const traderOk = traderAnswers.every((a,i) => a === TRADER_ANSWER_KEY[i]);
+    doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    if(traderOk){
+      doc.text('✅ OPTIMAL TRADING-TILSTAND', margin, y);
+    } else {
+      doc.text('⚠️ IKKE OPTIMAL TRADING-TILSTAND', margin, y);
+    }
+    y += 8;
+  } else {
+    doc.setFont('helvetica','normal'); doc.setFontSize(11);
+    doc.text('(Ikke udfyldt)', margin, y); y += 8;
+  }
+
+  if(traderAllAnswered){
+    TRADER_GROUPS.forEach((g, gi)=>{
+      doc.setFont('helvetica','bold'); doc.setFontSize(11);
+      doc.text(g.title, margin, y); y += 6;
+      doc.setFont('helvetica','normal'); doc.setFontSize(10);
+
+      const globalStart = TRADER_GROUPS.slice(0,gi).reduce((n,gg)=>n+gg.items.length,0);
+
+      g.items.forEach((text, localIdx)=>{
+        const globalIndex = globalStart + localIdx;
+        const aLbl = traderAnswers[globalIndex]==='yes' ? 'Ja' : 'Nej';
+        const correct = traderAnswers[globalIndex]===TRADER_ANSWER_KEY[globalIndex];
+        const mark = correct ? '✅' : '❌';
+
+        const lineQ = doc.splitTextToSize(`T${globalIndex+1}. ${text}`, maxWidth);
+        const lineA = [`Svar: ${aLbl}  ${mark}`];
+
+        const blockHeight = lineQ.length*5 + lineA.length*5 + 3;
+        if(y + blockHeight > pageHeight - margin){
+          doc.addPage(); y = margin;
+        }
+        doc.text(lineQ, margin, y); y += lineQ.length*5;
+        doc.text(lineA, margin, y); y += lineA.length*5 + 3;
+      });
+
+      y += 2;
+    });
+  }
+
+  y += 5;
+
+  // DEL 2: Aktie-analyse
+  doc.setFont('helvetica','bold'); doc.setFontSize(14);
+  if(y + 20 > pageHeight - margin){ doc.addPage(); y = margin; }
+  doc.text('DEL 2: AKTIE-ANALYSE', margin, y); y += 8;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(11);
   doc.text('✅ OKAY TIL KØB / SLAG', margin, y); y += 8;
 
-  // Checkliste med kategorier
-  GROUPS.forEach((g, gi)=>{
-    doc.setFont('helvetica','bold'); doc.text(g.title, margin, y); y += 6;
-    doc.setFont('helvetica','normal');
+  AKTIE_GROUPS.forEach((g, gi)=>{
+    doc.setFont('helvetica','bold'); doc.setFontSize(11);
+    if(y + 10 > pageHeight - margin){ doc.addPage(); y = margin; }
+    doc.text(g.title, margin, y); y += 6;
+    doc.setFont('helvetica','normal'); doc.setFontSize(10);
 
-    const pageHeight = doc.internal.pageSize.getHeight();
-    const maxWidth = doc.internal.pageSize.getWidth() - margin*2;
+    const globalStart = AKTIE_GROUPS.slice(0,gi).reduce((n,gg)=>n+gg.items.length,0);
 
     g.items.forEach((text, localIdx)=>{
-      // globalt index i ANSWER_KEY
-      const globalIndex = GROUPS.slice(0,gi).reduce((n,gg)=>n+gg.items.length,0) + localIdx;
-      const aLbl = answers[globalIndex]==='yes' ? 'Ja' : answers[globalIndex]==='no' ? 'Nej' : 'Ved ikke';
-      const correct = answers[globalIndex]===ANSWER_KEY[globalIndex];
+      const globalIndex = globalStart + localIdx;
+      const aLbl = aktieAnswers[globalIndex]==='yes' ? 'Ja' : aktieAnswers[globalIndex]==='no' ? 'Nej' : 'Ved ikke';
+      const correct = aktieAnswers[globalIndex]===AKTIE_ANSWER_KEY[globalIndex];
       const mark = correct ? '✅' : '❌';
 
-      const lineQ = doc.splitTextToSize(`${globalIndex+1}. ${text}`, maxWidth);
+      const lineQ = doc.splitTextToSize(`A${globalIndex+1}. ${text}`, maxWidth);
       const lineA = [`Svar: ${aLbl}  ${mark}`];
 
       const blockHeight = lineQ.length*5 + lineA.length*5 + 3;
@@ -466,14 +819,14 @@ function exportPDF(){
   });
 
   const safeName = firma.replace(/[^A-Za-z0-9_-]+/g,'_').replace(/_+/g,'_');
-  const filename = `${isoDate}_${safeName}_Forberedelsesskema.pdf`;
+  const filename = `${isoDate}_${safeName}_TradingCheckliste.pdf`;
   doc.save(filename);
 }
 
 /* Init */
-renderAll();
-updateGroupStates();
-updateFinalBanner();
+renderTrader();
+renderAktie();
+updateAll();
 </script>
 </body>
 </html>
